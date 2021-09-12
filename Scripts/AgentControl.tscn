@@ -1,20 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/AgentControl.gd" type="Script" id=1]
-[ext_resource path="res://Sprites/Nanobot.tres" type="SpriteFrames" id=2]
-
-[sub_resource type="CircleShape2D" id=1]
+[ext_resource path="res://Scripts/Objects/Agent.tscn" type="PackedScene" id=2]
 
 [node name="AgentControl" type="Node"]
 script = ExtResource( 1 )
-agent = NodePath("Agent")
 
-[node name="Agent" type="RigidBody2D" parent="."]
-
-[node name="AnimatedSprite" type="AnimatedSprite" parent="Agent"]
-frames = ExtResource( 2 )
-frame = 1
-playing = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Agent"]
-shape = SubResource( 1 )
+[node name="Agent" parent="." instance=ExtResource( 2 )]

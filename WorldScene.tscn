@@ -1,11 +1,39 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/AgentControl.tscn" type="PackedScene" id=1]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 25.0198, 10 )
 
 [node name="WorldScene" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 514, 301 )
 current = true
+zoom = Vector2( 3, 3 )
 
 [node name="AgentControl" parent="." instance=ExtResource( 1 )]
+agentPath = NodePath("Agent2")
+agentAmount = 1000
+agentSpawnArea = 500
+
+[node name="Agent2" parent="AgentControl" instance_placeholder="res://Scripts/Objects/Agent.tscn"]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2( 156.975, 544.657 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2( -8.48529, -154.149 )
+rotation = 0.142923
+scale = Vector2( 182.317, 3.92 )
+shape = SubResource( 1 )
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
+position = Vector2( 779.229, 588.497 )
+rotation = -0.270564
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
+position = Vector2( -8.48529, -154.149 )
+rotation = 0.142923
+scale = Vector2( 79.7106, 3.95413 )
+shape = SubResource( 1 )

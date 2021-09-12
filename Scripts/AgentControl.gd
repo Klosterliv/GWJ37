@@ -1,8 +1,11 @@
 extends Node
 
-export var agent : NodePath
+export var agentPath : NodePath
+#onready var agentbase = preload("res://Scripts/Objects/Agent.tscn")
 export var agentAmount := 5
 export var agentSpawnArea := 2
+
+var agentTemplate
 
 var agents = []
 
@@ -12,15 +15,22 @@ var agents = []
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	Spawn();
+func _ready():	
+	
+	agentTemplate = get_node(agentPath)
+	for n in agentAmount:
+		Spawn();
 	pass # Replace with function body.
 
 func Spawn():
-	var newAgent = get_node(agent).create_instance()
-	var position = Vector2(1,1)
-	newAgent.position = Vector2(position.x + rand_range(-1,1)*agentSpawnArea, position.y + rand_range(-1,1)*agentSpawnArea);
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+		
+	var newAgent = agentTemplate.create_instance()
+	
+	#add_child(newAgent)
+	
+	
+	var pos = Vector2(0 + rand_range(-1,1)*agentSpawnArea, 0 + rand_range(-1,1)*agentSpawnArea)
+	
+	newAgent.position = pos;
 #func _process(delta):
 #	pass
