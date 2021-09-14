@@ -1,6 +1,12 @@
-extends RigidBody2D
+extends KinematicBody2D
 
 var neighbors = []
+var direction := Vector2(0,0)
+var maxSpeed := 10.0
+var target = Vector2(0,0)
+var vel = Vector2(0,0)
+var force = Vector2(0,0)
+var maxForce = .8
 
 # Declare member variables here. Examples:
 # var a = 2

@@ -4,17 +4,31 @@ extends Control
 # var a = 2
 # var b = "text"
 export var mouseCoordLabel : NodePath
+export var agentControl : NodePath
 
+func _process(delta): 
+	if (Input.is_mouse_button_pressed(BUTTON_LEFT)):
+		var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
+		get_node(agentControl).FollowMouse(true)
+	else:
+		get_node(agentControl).FollowMouse(false)
+		
 func _input(event):
+	var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
 	#get_global_mouse_position()
    # Mouse in viewport coordinates.
 	if event is InputEventMouseButton:
-	   pass
-	elif event is InputEventMouseMotion:
-		var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
+		if event.button_index == 1:
+			get_node(agentControl).mousePos = globalWorldMousePosition
+			get_node(agentControl).FollowMouse(true)
+	elif event is InputEventMouseMotion:		
 #		print(globalWorldMousePosition)
 #		globalWorldMousePosition = get_local_mouse_position()
 		get_node(mouseCoordLabel).text = str(globalWorldMousePosition)
+		get_node(agentControl).mousePos = globalWorldMousePosition
+		
+	else:
+		get_node(agentControl).FollowMouse(false)
 #		print("Mouse Motion at: ", event.position)
 	
 
