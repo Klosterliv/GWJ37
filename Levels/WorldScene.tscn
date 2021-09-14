@@ -1,20 +1,23 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Scripts/WorldScript.gd" type="Script" id=2]
-[ext_resource path="res://AgentControl2.gd" type="Script" id=3]
-[ext_resource path="res://Control.gd" type="Script" id=5]
+[ext_resource path="res://Scripts/Control.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/AgentControl.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/CameraScript.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/WorldScript.gd" type="Script" id=4]
 
 [node name="WorldScene" type="Node2D"]
-script = ExtResource( 2 )
+script = ExtResource( 4 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 1536.72, 897.982 )
 current = true
 zoom = Vector2( 3, 3 )
-
-[node name="AgentControl2" type="Node2D" parent="."]
 script = ExtResource( 3 )
-agentPath = NodePath("Agent2")
+
+[node name="AgentControl" type="Node2D" parent="."]
+script = ExtResource( 2 )
+agentPath = NodePath("Agent")
+cohesion = 0.1
 agentMaxSpeed = 12.0
 agentAmount = 100
 agentSpawnArea = 500.0
@@ -23,7 +26,7 @@ forceMultiplier = 5.0
 boundsX = 5000
 boundsY = 3000
 
-[node name="Agent2" parent="AgentControl2" instance_placeholder="res://Scripts/Objects/Agent.tscn"]
+[node name="Agent" parent="AgentControl" instance_placeholder="res://Scripts/Objects/Agent.tscn"]
 
 [node name="Test Interface" type="CanvasLayer" parent="."]
 
@@ -43,9 +46,9 @@ __meta__ = {
 [node name="Control" type="Control" parent="Test Interface"]
 margin_right = 40.0
 margin_bottom = 40.0
-script = ExtResource( 5 )
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 mouseCoordLabel = NodePath("../MouseCoord")
-agentControl = NodePath("../../AgentControl2")
+agentControl = NodePath("../../AgentControl")

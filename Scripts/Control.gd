@@ -8,7 +8,7 @@ export var agentControl : NodePath
 
 func _process(delta): 
 	if (Input.is_mouse_button_pressed(BUTTON_LEFT)):
-		var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
+		#var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
 		get_node(agentControl).FollowMouse(true)
 	else:
 		get_node(agentControl).FollowMouse(false)

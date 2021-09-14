@@ -3,7 +3,7 @@
 [ext_resource path="res://Sprites/Nanobot.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://Scripts/Objects/Agent.gd" type="Script" id=2]
 
-[sub_resource type="CircleShape2D" id=2]
+[sub_resource type="CircleShape2D" id=1]
 radius = 5.02796
 
 [node name="Agent" type="KinematicBody2D"]
@@ -12,10 +12,10 @@ script = ExtResource( 2 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 scale = Vector2( 0.3, 0.3 )
 frames = ExtResource( 1 )
-frame = 1
+frame = 2
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2( 1.5, 1.5 )
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 disabled = true
