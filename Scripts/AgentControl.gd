@@ -34,3 +34,24 @@ func Spawn():
 	newAgent.position = pos;
 #func _process(delta):
 #	pass
+func init_neighbors(width, height, value):
+	var a = []
+
+	for x in range(width):
+		a.append([])
+		a[x].resize(height)
+
+		for y in range(height):
+			a[x][y] = value
+
+	return a
+	
+func _draw():
+	var center = Vector2(200, 200)
+	var radius = 80
+	var angle_from = 75
+	var angle_to = 195
+	var color = Color(1.0, 0.0, 0.0)
+	#draw_circle_arc(center, radius, angle_from, angle_to, color)
+	
+	

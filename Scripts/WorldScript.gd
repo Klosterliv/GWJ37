@@ -4,6 +4,7 @@ const ZOOM_STEP := 0.1
 export var cameraZoom := 3.0
 
 func _unhandled_input(event):
+	
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_WHEEL_DOWN:
 			change_zoom(ZOOM_STEP)
