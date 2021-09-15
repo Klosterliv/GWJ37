@@ -48,7 +48,7 @@ func fieldAtPoint(point):
 
 func _draw():	
 	
-	if(get_parent().get_node("Test Interface/DebugButton").pressed):
+	if(drawField):
 		var xoff := 0.0	
 		for i in cols:
 			var yoff := 0.0

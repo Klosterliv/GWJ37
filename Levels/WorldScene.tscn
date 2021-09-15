@@ -1,14 +1,10 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scripts/Control.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/AgentControl.gd" type="Script" id=2]
 [ext_resource path="res://Scripts/CameraScript.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/WorldScript.gd" type="Script" id=4]
-[ext_resource path="res://Art/Fonts/Already Broken Dull Demo Version.otf" type="DynamicFontData" id=5]
 [ext_resource path="res://Levels/VectorField.gd" type="Script" id=7]
-
-[sub_resource type="DynamicFont" id=1]
-font_data = ExtResource( 5 )
 
 [node name="WorldScene" type="Node2D"]
 script = ExtResource( 4 )
@@ -53,10 +49,10 @@ __meta__ = {
 [node name="FlowMapValue" type="Label" parent="Test Interface"]
 anchor_right = 0.039
 anchor_bottom = 0.052
-margin_left = 33.8541
-margin_top = 46.6695
-margin_right = 33.9181
-margin_bottom = 46.4695
+margin_left = 67.7082
+margin_top = 93.339
+margin_right = 67.7722
+margin_bottom = 93.139
 text = "TEXT
 "
 __meta__ = {
@@ -87,17 +83,6 @@ __meta__ = {
 mouseCoordLabel = NodePath("../MouseCoord")
 agentControl = NodePath("../../AgentControl")
 flowMapLabel = NodePath("../FlowMapValue")
-
-[node name="DebugButton" type="Button" parent="Test Interface"]
-margin_right = 44.0
-margin_bottom = 23.0
-custom_fonts/font = SubResource( 1 )
-toggle_mode = true
-text = "debug"
-flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="VectorField" type="Node2D" parent="."]
 script = ExtResource( 7 )
