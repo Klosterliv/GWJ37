@@ -1,9 +1,27 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Control.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/AgentControl.gd" type="Script" id=2]
 [ext_resource path="res://Scripts/CameraScript.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/WorldScript.gd" type="Script" id=4]
+[ext_resource path="res://Levels/FlowMap.gd" type="Script" id=5]
+[ext_resource path="res://Art/8x8Uithings.png" type="Texture" id=6]
+
+[sub_resource type="TileSet" id=1]
+0/name = "arrow"
+0/texture = ExtResource( 6 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 40, 32, 8, 8 )
+0/tile_mode = 0
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
 
 [node name="WorldScene" type="Node2D"]
 script = ExtResource( 4 )
@@ -13,15 +31,16 @@ position = Vector2( 1536.72, 897.982 )
 current = true
 zoom = Vector2( 3, 3 )
 script = ExtResource( 3 )
+defaultZoom = 5.0
 
 [node name="AgentControl" type="Node2D" parent="."]
 script = ExtResource( 2 )
 agentPath = NodePath("Agent")
-cohesion = 0.1
-agentMaxSpeed = 12.0
-agentAmount = 100
+separation = 0.5
+agentMaxSpeed = 8.0
+agentAmount = 3
 agentSpawnArea = 500.0
-neighborDist = 160.0
+neighborDist = 80.0
 forceMultiplier = 5.0
 boundsX = 5000
 boundsY = 3000
@@ -43,6 +62,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="MapCoord" type="Label" parent="Test Interface"]
+anchor_right = 0.039
+anchor_bottom = 0.052
+margin_left = 33.8541
+margin_top = 46.6695
+margin_right = 33.9181
+margin_bottom = 46.4695
+text = "TEXT
+"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Control" type="Control" parent="Test Interface"]
 margin_right = 40.0
 margin_bottom = 40.0
@@ -52,3 +84,12 @@ __meta__ = {
 }
 mouseCoordLabel = NodePath("../MouseCoord")
 agentControl = NodePath("../../AgentControl")
+
+[node name="FlowMap" type="TileMap" parent="."]
+tile_set = SubResource( 1 )
+cell_size = Vector2( 8, 8 )
+centered_textures = true
+format = 1
+script = ExtResource( 5 )
+AgentControl = NodePath("../AgentControl")
+resolution = 8

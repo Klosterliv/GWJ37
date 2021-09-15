@@ -235,6 +235,6 @@ func DrawGrid():
 	for y in linesY+1:
 		var o = Vector2(0, y*gridSize)
 		draw_line(o, o+Vector2.RIGHT*boundsX, Color(0, .6, .6, .6), 1)	
-	
+
 func remap_range(value, InputA, InputB, OutputA, OutputB):
 	return(value - InputA) / (InputB - InputA) * (OutputB - OutputA) + OutputA

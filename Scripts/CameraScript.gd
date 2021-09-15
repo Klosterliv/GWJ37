@@ -3,6 +3,9 @@ extends Camera2D
 export var defaultZoom := 3.0
 export var zoomStep := 0.2
 
+func _ready():
+	zoom = Vector2(defaultZoom, defaultZoom)
+
 func _unhandled_input(event):
 	
 	if event is InputEventMouseButton:

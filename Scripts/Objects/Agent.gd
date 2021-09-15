@@ -6,7 +6,7 @@ var maxSpeed := 10.0
 var target = Vector2(0,0)
 var vel = Vector2(0,0)
 var force = Vector2(0,0)
-var maxForce = .8
+var maxForce = 0.8
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -21,3 +21,4 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+
