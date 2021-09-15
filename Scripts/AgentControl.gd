@@ -1,11 +1,13 @@
 extends Node2D
 
 export var agentPath : NodePath
+export var FlowMap : NodePath
 #onready var agentbase = preload("res://Scripts/Objects/Agent.tscn")
 export var separation := 1.1
 export var alignment := 0.4
 export var cohesion := 0.5
 export var targetseek := 3.0
+export var flowfollow := 1.2
 
 export var agentMaxSpeed := 10.0
 export var agentMaxForce := 0.8
@@ -24,6 +26,7 @@ export var drawGrid := false
 var gridPop = []
 
 var agentTemplate
+var flowMap 
 
 var agents = []
 var neighbors
@@ -36,6 +39,8 @@ func _ready():
 	
 	mousePos = Vector2(boundsX/2,boundsY/2)
 	agentTemplate = get_node(agentPath)
+	flowMap = get_node(FlowMap)
+	
 	for n in agentAmount:
 		
 		Spawn();
@@ -94,7 +99,12 @@ func Bounds(agent):
 		bounds.y = 500
 	return bounds		
 	
+func FlowFieldFollow(agent, flowfield):
+	return flowfield.flowAtPoint(agent.position)
+	
+	
 func Seek(agent, target):
+	
 	var desV = target - agent.position
 	var curV = agent.vel
 	
@@ -154,8 +164,9 @@ func Steer(agent, delta):
 	var align = Alignment(agent) * alignment
 	var coh = Cohesion(agent) * cohesion
 	var target = Seek(agent, agent.target)	* targetseek
+	var flow = FlowFieldFollow(agent, flowMap) * flowfollow
 
-	var steer = sep + align + coh + target	
+	var steer = sep + align + coh + target + flow
 	
 	steer = steer.clamped(agent.maxForce)	
 	agent.force = steer
@@ -238,3 +249,7 @@ func DrawGrid():
 
 func remap_range(value, InputA, InputB, OutputA, OutputB):
 	return(value - InputA) / (InputB - InputA) * (OutputB - OutputA) + OutputA
+func flowAtPoint(point):
+	return flowMap.flowAtPoint(point)
+func fieldAtPoint(point):
+	return flowMap.fieldAtPoint(point)

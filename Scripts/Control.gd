@@ -5,6 +5,7 @@ extends Control
 # var b = "text"
 export var mouseCoordLabel : NodePath
 export var agentControl : NodePath
+export var flowMapLabel : NodePath
 
 func _process(delta): 
 	if (Input.is_mouse_button_pressed(BUTTON_LEFT)):
@@ -26,6 +27,7 @@ func _input(event):
 #		globalWorldMousePosition = get_local_mouse_position()
 		get_node(mouseCoordLabel).text = str(globalWorldMousePosition)
 		get_node(agentControl).mousePos = globalWorldMousePosition
+		get_node(flowMapLabel).text = str(get_node(agentControl).fieldAtPoint(globalWorldMousePosition))+ ": " +str(get_node(agentControl).flowAtPoint(globalWorldMousePosition))
 		
 	else:
 		get_node(agentControl).FollowMouse(false)
