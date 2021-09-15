@@ -49,10 +49,10 @@ __meta__ = {
 [node name="FlowMapValue" type="Label" parent="Test Interface"]
 anchor_right = 0.039
 anchor_bottom = 0.052
-margin_left = 67.7082
-margin_top = 93.339
-margin_right = 67.7722
-margin_bottom = 93.139
+margin_left = 33.8541
+margin_top = 46.6695
+margin_right = 33.9181
+margin_bottom = 46.4695
 text = "TEXT
 "
 __meta__ = {
@@ -84,7 +84,19 @@ mouseCoordLabel = NodePath("../MouseCoord")
 agentControl = NodePath("../../AgentControl")
 flowMapLabel = NodePath("../FlowMapValue")
 
+[node name="DebugButton" type="Button" parent="Test Interface"]
+margin_right = 12.0
+margin_bottom = 20.0
+toggle_mode = true
+text = "debug"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="VectorField" type="Node2D" parent="."]
 script = ExtResource( 7 )
 AgentControl = NodePath("../AgentControl")
 resolution = 8
+
+[connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]

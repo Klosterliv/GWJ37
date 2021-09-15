@@ -31,23 +31,19 @@ func _ready():
 			field[i][j] = Vector2((cos(theta)),(sin(theta)))*3
 			yoff += noiseZoom
 		xoff += noiseZoom
-	#print(get_used_cells_by_id(0))
 
-#func lookup(lookup:Vector2):
-#	var column = int(snap)
 func flowAtPoint(point):
 	point = fieldAtPoint(point)
 	var value = field[int(point.x)][int(point.y)]
 	return value
-	
+
 func fieldAtPoint(point):
 	point /= resolution
 	point.y = int(clamp(point.y, 0, rows-1))
 	point.x = int(clamp(point.x, 0, cols-1))
 	return point
 
-func _draw():	
-	
+func _draw():
 	if(drawField):
 		var xoff := 0.0	
 		for i in cols:
@@ -56,7 +52,14 @@ func _draw():
 				draw_line(Vector2(xoff,yoff),Vector2(xoff,yoff)+field[i][j],Color(field[i][j].x,field[i][j].y,.5, .1))
 				yoff += resolution
 			xoff += resolution
-			
-		
+
 func remap_range(value, InputA, InputB, OutputA, OutputB):
 	return(value - InputA) / (InputB - InputA) * (OutputB - OutputA) + OutputA
+
+func _on_DebugButton_toggled(button_pressed):
+	if button_pressed:
+		drawField = true
+		update()
+	else:
+		drawField = false
+	update()
