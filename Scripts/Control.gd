@@ -22,7 +22,7 @@ func _input(event):
 		if event.button_index == 1:
 			get_node(agentControl).mousePos = globalWorldMousePosition
 			get_node(agentControl).FollowMouse(true)
-	elif event is InputEventMouseMotion:		
+	elif event is InputEventMouseMotion:
 #		print(globalWorldMousePosition)
 #		globalWorldMousePosition = get_local_mouse_position()
 		get_node(mouseCoordLabel).text = str(globalWorldMousePosition)
