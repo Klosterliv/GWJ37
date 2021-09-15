@@ -209,7 +209,7 @@ func _physics_process(delta):
 		
 		a.position += a.vel
 
-	update()
+	update()	
 	
 	
 func _draw():	
