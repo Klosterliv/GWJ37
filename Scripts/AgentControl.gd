@@ -2,12 +2,16 @@ extends Node2D
 
 export var agentPath : NodePath
 export var FlowMap : NodePath
+export var path : NodePath
 #onready var agentbase = preload("res://Scripts/Objects/Agent.tscn")
 export var separation := 1.1
 export var alignment := 0.4
 export var cohesion := 0.5
 export var targetseek := 3.0
 export var flowfollow := 1.2
+export var followflow := false
+export var viewrange := 60
+export var followpaths := true
 
 export var agentMaxSpeed := 10.0
 export var agentMaxForce := 0.8
@@ -101,8 +105,7 @@ func Bounds(agent):
 	
 func FlowFieldFollow(agent, flowfield):
 	return flowfield.flowAtPoint(agent.position)
-	
-	
+
 func Seek(agent, target):
 	
 	var desV = target - agent.position
@@ -154,7 +157,26 @@ func Cohesion(agent):
 		return Seek(agent,sum)	
 	else: 
 		return sum
-		
+
+func Follow(agent, p):
+	var predict = agent.vel
+	predict.normalized()
+	predict *= viewrange
+	var predictLoc = agent.position + predict
+	
+	var a = p.start
+	var b = p.end
+	var normalPoint = getNormal(predictLoc, a, b)
+	
+	var dir = b - a
+	dir.normalized()
+	dir *= 10 #look ahead value
+	var target = normalPoint + dir
+	
+	var distance = normalPoint.distance_to(predictLoc)
+	if (distance > p.radius):
+		return Seek(agent, target)
+
 func Wander(agent):
 	agent.target = agent.position + (agent.vel.normalized()*150 + (Vector2(rand_range(-1,1),rand_range(-1,1)).normalized()*5))
 
@@ -163,28 +185,20 @@ func Steer(agent, delta):
 	var sep = Separation(agent) * separation
 	var align = Alignment(agent) * alignment
 	var coh = Cohesion(agent) * cohesion
-	var target = Seek(agent, agent.target)	* targetseek
+	var target = Seek(agent, agent.target) * targetseek
 	var flow = FlowFieldFollow(agent, flowMap) * flowfollow
-
-	var steer = sep + align + coh + target + flow
+	var follow = Follow(agent, get_node(path))
+	if !followflow:
+		flow = Vector2.ZERO
+	if !followpaths:
+		follow = Vector2.ZERO
+	
+	var steer = sep + align + coh + target + flow + follow
 	
 	steer = steer.clamped(agent.maxForce)	
 	agent.force = steer
-	
-#func _physics_process(delta):
-#	for a in agents:
-##		print(c)
-#		find_neighbors(a)
-#
-#		#a.vel = a.linear_velocity
-#		Steer(a, delta)
-##		a.vel = a.force
-#		a.position += a.force*delta
-##		a.apply_central_impulse(a.vel);
-#		#a.add_central_force(a.force)
-#	update()
-				
-	
+
+
 func _physics_process(delta):
 	var c = 0
 	for a in agents:
@@ -208,11 +222,11 @@ func _physics_process(delta):
 		#a.add_central_force(f)
 		
 		a.position += a.vel
+	
+	update()
 
-	update()	
-	
-	
-func _draw():	
+
+func _draw():
 	DrawGrid()
 	if (!drawDir && !drawNeighbors): 
 		return
@@ -224,6 +238,7 @@ func _draw():
 			draw_line(pos, pos + vel.clamped(30), Color(255, 0, 0), 1)
 			draw_line(pos, pos + a.force.clamped(30), Color(255, 255, 0), 1)
 			draw_line(pos, a.target, Color(0, 0, 0, .1), 1)
+			draw_line(pos, getNormal(vel*viewrange, get_node(path).start, get_node(path).end),Color.red, 1)
 		if (drawNeighbors && a.neighbors.size() > 0):
 			var pos = a.position
 #			print(a.neighbors.size())
@@ -234,11 +249,10 @@ func _draw():
 				draw_line(pos, npos, Color(.2, 1, 0, .2), 1)
 			pass
 	#draw_line(pos, pos + Vector2.UP, Color(255, 0, 0), 1)
-	
+
 func DrawGrid():
 	var linesX = abs(boundsX / gridSize)
 	var linesY = abs(boundsY / gridSize)
-	
 	
 	for x in linesX+1:
 		var o = Vector2(x*gridSize, 0)
@@ -253,3 +267,14 @@ func flowAtPoint(point):
 	return flowMap.flowAtPoint(point)
 func fieldAtPoint(point):
 	return flowMap.fieldAtPoint(point)
+func angleBetween(a:Vector2,b:Vector2):
+	var dot = a.dot(b)
+	return acos(dot / (a.length() * b.length()))
+func getNormal(p:Vector2,a:Vector2,b:Vector2):
+	var ap = p - a
+	var ab = b - a
+	
+	ab.normalized()
+	ab *= ap.dot(ab)
+	
+	return (a + ab)

@@ -1,10 +1,16 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Control.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/AgentControl.gd" type="Script" id=2]
 [ext_resource path="res://Scripts/CameraScript.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/WorldScript.gd" type="Script" id=4]
+[ext_resource path="res://Levels/Path.gd" type="Script" id=5]
 [ext_resource path="res://Levels/VectorField.gd" type="Script" id=7]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 113.74, 110.557, 0, 0, 0, 0, 3056.52, 1769.5 )
+}
 
 [node name="WorldScene" type="Node2D"]
 script = ExtResource( 4 )
@@ -20,6 +26,7 @@ defaultZoom = 5.0
 script = ExtResource( 2 )
 agentPath = NodePath("Agent")
 FlowMap = NodePath("../VectorField")
+path = NodePath("../Path")
 separation = 0.5
 agentMaxSpeed = 8.0
 agentAmount = 3
@@ -98,5 +105,12 @@ __meta__ = {
 script = ExtResource( 7 )
 AgentControl = NodePath("../AgentControl")
 resolution = 8
+
+[node name="Path" type="Path2D" parent="."]
+self_modulate = Color( 0.501961, 0.6, 1, 1 )
+position = Vector2( -11.8901, 6.60712 )
+scale = Vector2( 0.998332, 1 )
+curve = SubResource( 1 )
+script = ExtResource( 5 )
 
 [connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]
