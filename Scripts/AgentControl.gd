@@ -238,7 +238,7 @@ func _draw():
 			draw_line(pos, pos + vel.clamped(30), Color(255, 0, 0), 1)
 			draw_line(pos, pos + a.force.clamped(30), Color(255, 255, 0), 1)
 			draw_line(pos, a.target, Color(0, 0, 0, .1), 1)
-			draw_line(pos, getNormal(vel*viewrange, get_node(path).start, get_node(path).end),Color.red, 1)
+			draw_line(pos, getNormal(pos + vel.normalized()*viewrange, get_node(path).start, get_node(path).end),Color.red, 1)
 		if (drawNeighbors && a.neighbors.size() > 0):
 			var pos = a.position
 #			print(a.neighbors.size())
