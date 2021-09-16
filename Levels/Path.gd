@@ -8,4 +8,4 @@ func _ready():
 	print(str(start) + " " + str(end))
 
 func _draw():
-	draw_polyline(curve.get_baked_points(), Color(0.9,0.2,0.2,0.5), radius, false) #change to polyline
+	draw_polyline(curve.get_baked_points(), Color(0.9,0.2,0.2,0.5), radius, false)

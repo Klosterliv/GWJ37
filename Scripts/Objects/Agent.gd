@@ -7,6 +7,7 @@ var target = Vector2(0,0)
 var vel = Vector2(0,0)
 var force = Vector2(0,0)
 var maxForce = 0.8
+var normalPoint = Vector2(0,0)
 
 # Declare member variables here. Examples:
 # var a = 2

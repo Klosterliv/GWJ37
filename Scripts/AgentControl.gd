@@ -10,7 +10,7 @@ export var cohesion := 0.5
 export var targetseek := 3.0
 export var flowfollow := 1.2
 export var followflow := false
-export var viewrange := 60
+export var viewrange := 40
 export var followpaths := true
 
 export var agentMaxSpeed := 10.0
@@ -168,6 +168,8 @@ func Follow(agent, p):
 	var b = p.end
 	var normalPoint = getNormal(predictLoc, a, b)
 	
+	agent.normalPoint = normalPoint
+	
 	var dir = b - a
 	dir.normalized()
 	dir *= 10 #look ahead value
@@ -195,7 +197,7 @@ func Steer(agent, delta):
 	
 	var steer = sep + align + coh + target + flow + follow
 	
-	steer = steer.clamped(agent.maxForce)	
+	steer = steer.clamped(agent.maxForce)
 	agent.force = steer
 
 
@@ -235,10 +237,11 @@ func _draw():
 		if (drawDir):
 			var pos = a.position
 			var vel = a.vel
+			var norm = a.normalPoint
 			draw_line(pos, pos + vel.clamped(30), Color(255, 0, 0), 1)
 			draw_line(pos, pos + a.force.clamped(30), Color(255, 255, 0), 1)
 			draw_line(pos, a.target, Color(0, 0, 0, .1), 1)
-			draw_line(pos, getNormal(pos + vel.normalized()*viewrange, get_node(path).start, get_node(path).end),Color.red, 1)
+			draw_line(pos, norm,Color.red, 1)
 		if (drawNeighbors && a.neighbors.size() > 0):
 			var pos = a.position
 #			print(a.neighbors.size())
@@ -278,3 +281,4 @@ func getNormal(p:Vector2,a:Vector2,b:Vector2):
 	ab *= ap.dot(ab)
 	
 	return (a + ab)
+
