@@ -9,7 +9,7 @@
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 113.74, 110.557, 0, 0, 0, 0, 3056.52, 1769.5 )
+"points": PoolVector2Array( 0, 0, 0, 0, 112.155, 1605, 0, 0, 0, 0, 1190.66, -403.213 )
 }
 
 [node name="WorldScene" type="Node2D"]
@@ -31,7 +31,6 @@ path = NodePath("../Path")
 separation = 0.5
 alignment = 0.5
 cohesion = 0.6
-followpaths = false
 agentAmount = 60
 agentSpawnArea = 500.0
 neighborDist = 80.0
@@ -122,8 +121,7 @@ drawVectorLength = 20
 
 [node name="Path" type="Path2D" parent="."]
 self_modulate = Color( 0.501961, 0.6, 1, 1 )
-position = Vector2( -723.849, -10.3443 )
-scale = Vector2( 0.998332, 1 )
+position = Vector2( -228.327, 190.273 )
 curve = SubResource( 1 )
 script = ExtResource( 5 )
 

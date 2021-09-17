@@ -189,7 +189,7 @@ func Cohesion(agent):
 
 func Follow(agent, p):
 	var predict = agent.vel
-	predict.normalized()
+	predict = predict.normalized()
 	predict *= viewrange
 	var predictLoc = agent.position + predict
 	
@@ -198,12 +198,14 @@ func Follow(agent, p):
 	var normalPoint = getNormal(predictLoc, a, b)
 	
 	var dir = b - a
-	dir.normalized()
+	dir = dir.normalized()
 	dir *= 10 #look ahead value
 	var target = normalPoint + dir
 	
 	var distance = normalPoint.distance_to(predictLoc)
 	if (distance > p.radius):
+		return Seek(agent, target)
+	else:
 		return Seek(agent, target)
 
 func Wander(agent):
@@ -286,6 +288,7 @@ func _physics_process(delta):
 
 
 func _draw():
+	draw_line(get_node(path).curve.get_point_position(0), get_node(path).curve.get_point_position(1),Color(.4,.1,.1,.4), 20)
 	DrawGrid()
 	if (!drawDir && !drawNeighbors): 
 		return
@@ -297,7 +300,11 @@ func _draw():
 			draw_line(pos, pos + vel.clamped(30)*2, Color(255, 0, 0), 1)
 			draw_line(pos, pos + a.force.clamped(30)*2, Color(255, 255, 0), 1)
 			draw_line(pos, a.target, Color(0, 0, 0, .1), 1)
-			#draw_line(pos, getNormal(pos + vel.normalized()*viewrange, get_node(path).start, get_node(path).end),Color.red, 1)
+			var pathpt1 = get_node(path).curve.get_point_position(0)
+			var pathpt2 = get_node(path).curve.get_point_position(1)
+			draw_line(pos, getNormal(pos + vel, pathpt1, pathpt2),Color(.8, .8, .2, .5), 1)
+			#print(get_node(path).curve.get_point_position(0))
+			
 		if (drawNeighbors && a.neighbors.size() > 0):
 			var pos = a.position
 #			print(a.neighbors.size())
@@ -333,7 +340,8 @@ func getNormal(p:Vector2,a:Vector2,b:Vector2):
 	var ap = p - a
 	var ab = b - a
 	
-	ab.normalized()
+	ab = ab.normalized()
+	1+1
 	ab *= ap.dot(ab)
 	
 	return (a + ab)

@@ -8,4 +8,13 @@ func _ready():
 	print(str(start) + " " + str(end))
 
 func _draw():
-	draw_polyline(curve.get_baked_points(), Color(0.9,0.2,0.2,0.5), radius, false)
+	var coords = []
+	var c = 0
+	for i in curve.get_baked_points():
+		coords.append(GetPoint(c))
+		c += 1
+	draw_polyline(coords, Color(0.9,0.2,0.2,0.5), radius, false)
+	pass
+
+func GetPoint(index):
+	return (position + curve.get_baked_points()[index])*scale
