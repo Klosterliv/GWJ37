@@ -25,11 +25,14 @@ defaultZoom = 5.0
 [node name="AgentControl" type="Node2D" parent="."]
 script = ExtResource( 2 )
 agentPath = NodePath("Agent")
+enemyPath = NodePath("AgentEnemy1")
 FlowMap = NodePath("../VectorField")
 path = NodePath("../Path")
 separation = 0.5
-agentMaxSpeed = 8.0
-agentAmount = 3
+alignment = 0.5
+cohesion = 0.6
+followpaths = false
+agentAmount = 60
 agentSpawnArea = 500.0
 neighborDist = 80.0
 forceMultiplier = 5.0
@@ -37,6 +40,15 @@ boundsX = 5000
 boundsY = 3000
 
 [node name="Agent" parent="AgentControl" instance_placeholder="res://Scripts/Objects/Agent.tscn"]
+
+[node name="AgentEnemy1" parent="AgentControl" instance_placeholder="res://Scripts/Objects/Agent.tscn"]
+scale = Vector2( 1.27137, 1.27283 )
+maxSpeed = 2
+health = 600.0
+armor = 65.0
+id = 1
+wander = true
+targetseek = 0.0
 
 [node name="Test Interface" type="CanvasLayer" parent="."]
 
@@ -104,11 +116,13 @@ __meta__ = {
 [node name="VectorField" type="Node2D" parent="."]
 script = ExtResource( 7 )
 AgentControl = NodePath("../AgentControl")
-resolution = 8
+resolution = 20
+noiseZoom = 1.0
+drawVectorLength = 20
 
 [node name="Path" type="Path2D" parent="."]
 self_modulate = Color( 0.501961, 0.6, 1, 1 )
-position = Vector2( -11.8901, 6.60712 )
+position = Vector2( -723.849, -10.3443 )
 scale = Vector2( 0.998332, 1 )
 curve = SubResource( 1 )
 script = ExtResource( 5 )

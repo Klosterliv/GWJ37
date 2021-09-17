@@ -3,6 +3,8 @@ extends Control
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
+export var ChargeRadius = 400
+
 export var mouseCoordLabel : NodePath
 export var agentControl : NodePath
 export var flowMapLabel : NodePath
@@ -22,6 +24,8 @@ func _input(event):
 		if event.button_index == 1:
 			get_node(agentControl).mousePos = globalWorldMousePosition
 			get_node(agentControl).FollowMouse(true)
+		elif event.button_index == 2:
+			get_node(agentControl).ChargeAt(globalWorldMousePosition, ChargeRadius)
 	elif event is InputEventMouseMotion:		
 #		print(globalWorldMousePosition)
 #		globalWorldMousePosition = get_local_mouse_position()

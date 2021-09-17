@@ -1,6 +1,7 @@
 extends Node2D
 
 export var agentPath : NodePath
+export var enemyPath : NodePath
 export var FlowMap : NodePath
 export var path : NodePath
 #onready var agentbase = preload("res://Scripts/Objects/Agent.tscn")
@@ -10,10 +11,10 @@ export var cohesion := 0.5
 export var targetseek := 3.0
 export var flowfollow := 1.2
 export var followflow := false
-export var viewrange := 60
+export var viewrange := 70
 export var followpaths := true
 
-export var agentMaxSpeed := 10.0
+export var agentMaxSpeed := 6
 export var agentMaxForce := 0.8
 
 export var agentAmount := 5
@@ -23,6 +24,9 @@ export var drawNeighbors := true
 export var neighborDist := 100.0
 export var forceMultiplier = 1.0
 
+export var enemyAmount := 10
+export var enemySpeed = 2.0
+
 export var boundsX := 1920
 export var boundsY := 1080
 export var gridSize := 120
@@ -30,6 +34,7 @@ export var drawGrid := false
 var gridPop = []
 
 var agentTemplate
+var enemyTemplate
 var flowMap 
 
 var agents = []
@@ -43,54 +48,58 @@ func _ready():
 	
 	mousePos = Vector2(boundsX/2,boundsY/2)
 	agentTemplate = get_node(agentPath)
+	enemyTemplate = get_node(enemyPath)
 	flowMap = get_node(FlowMap)
 	
 	for n in agentAmount:
+				
+		var newAgent = Spawn(agentTemplate)
+		var pos = Vector2(0 + rand_range(-1,1)*agentSpawnArea, 0 + rand_range(-1,1)*agentSpawnArea)
+		var fpos = pos + Vector2(boundsX/2, boundsY/2)
+		draw_line(fpos, fpos + Vector2.UP, Color(255, 0, 0), 1)
+		newAgent.position = fpos;
+	#	newAgent.apply_central_impulse(pos*.25);
+		newAgent.target = Vector2(boundsX/2,boundsY/2)
+		newAgent.targetRadius = 300
 		
-		Spawn();
+		newAgent.maxSpeed = agentMaxSpeed
+		newAgent.maxForce = agentMaxForce
+		
+		newAgent.SetSize(.3)
+	
+	var count = 0
+	for e in enemyAmount:
+		count+=1
+		var newEnemy = Spawn(enemyTemplate)
+		var pos = Vector2(count*200, 10)
+		newEnemy.position = pos;
+
+		newEnemy.SetSize(2)
 	#neighbors = init_neighbors(agentAmount, 6, null)
 	pass # Replace with function body.
 	#set_process(true)
 
-func Spawn():
+func Spawn(template):
 		
-	var newAgent = agentTemplate.create_instance()
+	var newAgent = template.create_instance()
 	
 	#add_child(newAgent)
 	
-	var pos = Vector2(0 + rand_range(-1,1)*agentSpawnArea, 0 + rand_range(-1,1)*agentSpawnArea)
-	var fpos = pos + Vector2(boundsX/2, boundsY/2)
-	draw_line(fpos, fpos + Vector2.UP, Color(255, 0, 0), 1)
-	newAgent.position = fpos;
-#	newAgent.apply_central_impulse(pos*.25);
-	newAgent.target = Vector2(boundsX/2,boundsY/2)
-	
-	newAgent.maxSpeed = agentMaxSpeed
-	newAgent.maxForce = agentMaxForce
-	
 	agents.append(newAgent)
+	
+	return newAgent
 
 func FollowMouse(yesno):
 	followMouse = yesno
-	
+
 func find_neighbors(agent):
 	agent.neighbors = []
 	for a in agents:
 		if(a!=agent):
-			if(agent.position.distance_to(a.position) < neighborDist):
+			if(agent.position.distance_to(a.position)+agent.radius+a.radius < neighborDist):
 				agent.neighbors.append(a)
 	return
-#func init_neighbors(width, height, value):
-#	var a = []
-#
-#	for x in range(width):
-#		a.append([])
-#		a[x].resize(height)
-#
-#		for y in range(height):
-#			a[x][y] = value
-#
-#	return a
+
 func Bounds(agent):
 	var bounds = Vector2(0,0)
 	if (agent.position.x > boundsX-25):
@@ -101,8 +110,25 @@ func Bounds(agent):
 		bounds.y = -500
 	elif (agent.position.y < 25):
 		bounds.y = 500
-	return bounds		
-	
+	return bounds
+
+func Attack(agent):
+	for n in agent.neighbors:
+		if (n.id != agent.id):
+			var dist = agent.position.distance_to(n.position)
+			if (dist <= (agent.radius + n.radius +.2)*24):
+				var relSpeed = abs(agent.vel.dot(n.vel))
+				print(str(relSpeed))
+				var dmg = abs(relSpeed - n.armor)
+				#print("dmg : "+str(dmg))
+				n.health = n.health - dmg
+				if(dmg <= n.health):
+					agent.vel = -agent.vel
+					agent.chargeTimer = 0
+				
+				
+				
+
 func FlowFieldFollow(agent, flowfield):
 	return flowfield.flowAtPoint(agent.position)
 
@@ -113,6 +139,9 @@ func Seek(agent, target):
 	
 	var d = desV.length()
 	desV = desV.normalized()
+	
+	if (d <= agent.targetRadius && agent.targetRadius != 0):
+		d /= agent.targetRadius
 	
 	if (d < 100):
 		var m = remap_range(d, 0, 100, 0, agent.maxSpeed)
@@ -180,11 +209,22 @@ func Follow(agent, p):
 func Wander(agent):
 	agent.target = agent.position + (agent.vel.normalized()*150 + (Vector2(rand_range(-1,1),rand_range(-1,1)).normalized()*5))
 
-func Steer(agent, delta):	
+func Steer(agent, delta):
 	
-	var sep = Separation(agent) * separation
-	var align = Alignment(agent) * alignment
-	var coh = Cohesion(agent) * cohesion
+	var steer = Vector2.ZERO
+	
+	if(agent.separate):
+		var sep = Separation(agent) * separation
+		steer += sep * agent.separation
+	if(agent.align):
+		var align = Alignment(agent) * alignment
+		steer += align * agent.separation
+	if(agent.cohere):
+		var coh = Cohesion(agent) * cohesion
+		steer += coh * agent.cohesion
+	
+	var bounds = Bounds(agent)
+	
 	var target = Seek(agent, agent.target) * targetseek
 	var flow = FlowFieldFollow(agent, flowMap) * flowfollow
 	var follow = Follow(agent, get_node(path))
@@ -193,22 +233,38 @@ func Steer(agent, delta):
 	if !followpaths:
 		follow = Vector2.ZERO
 	
-	var steer = sep + align + coh + target + flow + follow
+	steer = steer + target + flow + follow + bounds
 	
 	steer = steer.clamped(agent.maxForce)	
 	agent.force = steer
 
+func Charge(agent, target):	
+	var dir = (target - agent.position).normalized()
+	agent.vel += dir * agent.chargeStrength * agent.maxForce
+	agent.chargeTimer = agent.chargeDelay
+	
+func ChargeAt(point, radius):
+	for a in agents:
+		if (a.id == 0):
+			if (a.chargeTimer <= 0 && a.position.distance_to(point) <= radius):
+				Charge(a, point)
 
 func _physics_process(delta):
 	var c = 0
 	for a in agents:
 #		print(c)
-		if (followMouse):
+		a.chargeTimer -= delta
+		if (a.chargeTimer > 0):
+			Attack(a)
+		
+		if (a.id == 0 && followMouse):
 			a.target = mousePos
-		else: 
+			a.targetRadius = 260
+		elif(a.wander): 
 			Wander(a)
+			a.targetRadius = 0
 			
-		a.target += Bounds(a)
+		#a.target += Bounds(a)
 		
 		find_neighbors(a)
 		
@@ -221,7 +277,10 @@ func _physics_process(delta):
 		#a.vel = f
 		#a.add_central_force(f)
 		
-		a.position += a.vel
+		a.position += a.vel*delta*100
+		
+		if(a.health <= 0):
+			a.SetSize(0)
 	
 	update()
 
@@ -235,10 +294,10 @@ func _draw():
 		if (drawDir):
 			var pos = a.position
 			var vel = a.vel
-			draw_line(pos, pos + vel.clamped(30), Color(255, 0, 0), 1)
-			draw_line(pos, pos + a.force.clamped(30), Color(255, 255, 0), 1)
+			draw_line(pos, pos + vel.clamped(30)*2, Color(255, 0, 0), 1)
+			draw_line(pos, pos + a.force.clamped(30)*2, Color(255, 255, 0), 1)
 			draw_line(pos, a.target, Color(0, 0, 0, .1), 1)
-			draw_line(pos, getNormal(pos + vel.normalized()*viewrange, get_node(path).start, get_node(path).end),Color.red, 1)
+			#draw_line(pos, getNormal(pos + vel.normalized()*viewrange, get_node(path).start, get_node(path).end),Color.red, 1)
 		if (drawNeighbors && a.neighbors.size() > 0):
 			var pos = a.position
 #			print(a.neighbors.size())

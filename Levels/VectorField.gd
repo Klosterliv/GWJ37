@@ -7,7 +7,9 @@ var cols : int
 var rows : int
 export var resolution : int
 export var noiseZoom := .1
+export var noiseStrength = 3
 export var drawField = false
+export var drawVectorLength = 3
 
 var noise = OpenSimplexNoise.new()
 
@@ -28,7 +30,7 @@ func _ready():
 		for j in rows:
 			field[i].append(0)
 			var theta = remap_range(noise.get_noise_2d(xoff,yoff),0,1,0,PI*2)
-			field[i][j] = Vector2((cos(theta)),(sin(theta)))*3
+			field[i][j] = Vector2((cos(theta)),(sin(theta)))*noiseStrength
 			yoff += noiseZoom
 		xoff += noiseZoom
 
@@ -49,7 +51,7 @@ func _draw():
 		for i in cols:
 			var yoff := 0.0
 			for j in rows:
-				draw_line(Vector2(xoff,yoff),Vector2(xoff,yoff)+field[i][j],Color(field[i][j].x,field[i][j].y,.5, .1))
+				draw_line(Vector2(xoff,yoff),Vector2(xoff,yoff)+field[i][j]*drawVectorLength,Color(field[i][j].x,field[i][j].y,.5, .1))
 				yoff += resolution
 			xoff += resolution
 
