@@ -20,7 +20,7 @@ _data = {
 script = ExtResource( 4 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 1536.72, 897.982 )
+position = Vector2( 2525.61, 1516.88 )
 current = true
 zoom = Vector2( 3, 3 )
 script = ExtResource( 3 )
@@ -30,6 +30,14 @@ defaultZoom = 5.0
 stream = ExtResource( 8 )
 autoplay = true
 script = ExtResource( 9 )
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="Camera2D"]
+
+[node name="Sprite" type="Sprite" parent="Camera2D/ParallaxBackground"]
+modulate = Color( 0.32549, 0.266667, 0.266667, 1 )
+position = Vector2( 2798.5, 1614.52 )
+scale = Vector2( 8.37564, 8.37564 )
+texture = ExtResource( 6 )
 
 [node name="AgentControl" type="Node2D" parent="."]
 script = ExtResource( 2 )

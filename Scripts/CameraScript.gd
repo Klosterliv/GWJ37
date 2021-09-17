@@ -6,6 +6,9 @@ export var zoomStep := 0.2
 func _ready():
 	zoom = Vector2(defaultZoom, defaultZoom)
 
+#func _process(delta):
+#	pass
+
 func _unhandled_input(event):
 	
 	if event is InputEventMouseButton:
