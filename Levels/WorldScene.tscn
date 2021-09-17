@@ -1,11 +1,15 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Control.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/AgentControl.gd" type="Script" id=2]
 [ext_resource path="res://Scripts/CameraScript.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/WorldScript.gd" type="Script" id=4]
 [ext_resource path="res://Levels/Path.gd" type="Script" id=5]
+[ext_resource path="res://Art/TexturesCom_Meat0016_seamless_S.jpg" type="Texture" id=6]
 [ext_resource path="res://Levels/VectorField.gd" type="Script" id=7]
+[ext_resource path="res://Sounds/211389__monica137142__underwater.mp3" type="AudioStream" id=8]
+[ext_resource path="res://Levels/BloodFlowSounds.gd" type="Script" id=9]
+[ext_resource path="res://Sounds/explosion.mp3" type="AudioStream" id=10]
 
 [sub_resource type="Curve2D" id=1]
 _data = {
@@ -22,6 +26,11 @@ zoom = Vector2( 3, 3 )
 script = ExtResource( 3 )
 defaultZoom = 5.0
 
+[node name="BloodFlowSounds" type="AudioStreamPlayer" parent="Camera2D"]
+stream = ExtResource( 8 )
+autoplay = true
+script = ExtResource( 9 )
+
 [node name="AgentControl" type="Node2D" parent="."]
 script = ExtResource( 2 )
 agentPath = NodePath("Agent")
@@ -31,6 +40,7 @@ path = NodePath("../Path")
 separation = 0.5
 alignment = 0.5
 cohesion = 0.6
+followpaths = false
 agentAmount = 60
 agentSpawnArea = 500.0
 neighborDist = 80.0
@@ -102,6 +112,9 @@ mouseCoordLabel = NodePath("../MouseCoord")
 agentControl = NodePath("../../AgentControl")
 flowMapLabel = NodePath("../FlowMapValue")
 
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="Test Interface/Control"]
+stream = ExtResource( 10 )
+
 [node name="DebugButton" type="Button" parent="Test Interface"]
 margin_right = 12.0
 margin_bottom = 20.0
@@ -125,4 +138,14 @@ position = Vector2( -228.327, 190.273 )
 curve = SubResource( 1 )
 script = ExtResource( 5 )
 
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2( -324.184, -21.5683 )
+scale = Vector2( 3.13191, 3.13191 )
+texture = ExtResource( 6 )
+texture_scale = Vector2( 0.286, 0.452 )
+invert_enable = true
+polygon = PoolVector2Array( 159.034, 98.1882, 215.034, 34.1882, 269.034, 18.1882, 349.034, 30.1882, 389.034, 102.188, 369.034, 148.188, 391.034, 212.188, 431.034, 230.188, 475.034, 232.188, 513.034, 214.188, 535.034, 160.188, 511.034, 84.1882, 579.034, 38.1882, 699.034, 14.1882, 761.034, 44.1882, 825.034, 104.188, 883.034, 176.188, 965.034, 182.188, 1115.03, 200.188, 1203.03, 172.188, 1231.03, 122.188, 1281.03, 56.1882, 1379.03, 48.1882, 1473.03, 80.1882, 1505.03, 138.188, 1485.03, 196.188, 1455.03, 242.188, 1439.03, 302.188, 1455.03, 362.188, 1489.03, 392.188, 1575.03, 394.188, 1613.03, 364.188, 1683.03, 312.188, 1695.03, 380.188, 1673.03, 436.188, 1625.03, 470.188, 1613.03, 522.188, 1647.03, 598.188, 1667.03, 646.188, 1661.03, 718.188, 1593.03, 788.188, 1467.03, 842.188, 1389.03, 876.188, 1215.03, 768.188, 1095.03, 750.188, 1043.03, 812.188, 979.034, 868.188, 887.034, 888.188, 821.034, 838.188, 743.034, 786.188, 623.034, 842.188, 617.034, 896.188, 573.034, 932.188, 473.034, 950.188, 379.034, 938.188, 335.034, 864.188, 311.034, 784.188, 267.034, 736.188, 201.034, 742.188, 109.034, 748.188, 57.0341, 782.188, -78.9659, 762.188, -114.966, 708.188, -132.966, 630.188, -108.966, 526.188, -74.9659, 380.188, -156.966, 246.188, -80.9659, 96.1882, 135.034, 64.1882 )
+
+[connection signal="finished" from="Test Interface/Control/AttackSound" to="Test Interface/Control" method="_on_AttackSound_finished"]
+[connection signal="toggled" from="Test Interface/DebugButton" to="AgentControl" method="_on_DebugButton_toggled"]
 [connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]

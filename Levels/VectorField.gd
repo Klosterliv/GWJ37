@@ -59,7 +59,7 @@ func remap_range(value, InputA, InputB, OutputA, OutputB):
 	return(value - InputA) / (InputB - InputA) * (OutputB - OutputA) + OutputA
 
 func _on_DebugButton_toggled(button_pressed):
-	if button_pressed:
+	if button_pressed and owner.get_node("AgentControl").followflow:
 		drawField = true
 		update()
 	else:

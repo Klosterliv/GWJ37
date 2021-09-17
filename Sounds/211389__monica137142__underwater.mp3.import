@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/211389__monica137142__underwater.mp3-d17ce44049d27188c763c9219845f61d.mp3str"
+
+[deps]
+
+source_file="res://Sounds/211389__monica137142__underwater.mp3"
+dest_files=[ "res://.import/211389__monica137142__underwater.mp3-d17ce44049d27188c763c9219845f61d.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

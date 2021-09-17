@@ -26,6 +26,8 @@ func _input(event):
 			get_node(agentControl).FollowMouse(true)
 		elif event.button_index == 2:
 			get_node(agentControl).ChargeAt(globalWorldMousePosition, ChargeRadius)
+			$AttackSound.position = globalWorldMousePosition
+			$AttackSound.play()
 	elif event is InputEventMouseMotion:		
 #		print(globalWorldMousePosition)
 #		globalWorldMousePosition = get_local_mouse_position()
@@ -48,3 +50,6 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+
+func _on_AttackSound_finished():
+	$AttackSound.playing = false

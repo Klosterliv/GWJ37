@@ -31,6 +31,9 @@ export var boundsX := 1920
 export var boundsY := 1080
 export var gridSize := 120
 export var drawGrid := false
+
+var debugLines = false
+
 var gridPop = []
 
 var agentTemplate
@@ -297,13 +300,14 @@ func _draw():
 		if (drawDir):
 			var pos = a.position
 			var vel = a.vel
-			draw_line(pos, pos + vel.clamped(30)*2, Color(255, 0, 0), 1)
-			draw_line(pos, pos + a.force.clamped(30)*2, Color(255, 255, 0), 1)
-			draw_line(pos, a.target, Color(0, 0, 0, .1), 1)
-			var pathpt1 = get_node(path).curve.get_point_position(0)
-			var pathpt2 = get_node(path).curve.get_point_position(1)
-			draw_line(pos, getNormal(pos + vel, pathpt1, pathpt2),Color(.8, .8, .2, .5), 1)
-			#print(get_node(path).curve.get_point_position(0))
+			if debugLines:
+				draw_line(pos, pos + vel.clamped(30)*2, Color(255, 0, 0), 1)
+				draw_line(pos, pos + a.force.clamped(30)*2, Color(255, 255, 0), 1)
+				draw_line(pos, a.target, Color(0, 0, 0, .1), 1)
+				var pathpt1 = get_node(path).curve.get_point_position(0)
+				var pathpt2 = get_node(path).curve.get_point_position(1)
+				draw_line(pos, getNormal(pos + vel, pathpt1, pathpt2),Color(.8, .8, .2, .5), 1)
+				#print(get_node(path).curve.get_point_position(0))
 			
 		if (drawNeighbors && a.neighbors.size() > 0):
 			var pos = a.position
@@ -345,3 +349,12 @@ func getNormal(p:Vector2,a:Vector2,b:Vector2):
 	ab *= ap.dot(ab)
 	
 	return (a + ab)
+
+
+func _on_DebugButton_toggled(button_pressed):
+	if button_pressed:
+		debugLines = true
+		update()
+	else:
+		debugLines = false
+		update()
