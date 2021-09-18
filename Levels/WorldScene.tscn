@@ -32,6 +32,7 @@ autoplay = true
 script = ExtResource( 9 )
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="Camera2D"]
+scroll_offset = Vector2( 2, 2 )
 
 [node name="Sprite" type="Sprite" parent="Camera2D/ParallaxBackground"]
 modulate = Color( 0.32549, 0.266667, 0.266667, 1 )
