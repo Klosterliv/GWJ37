@@ -1,4 +1,4 @@
-extends KinematicBody2D
+extends RigidBody2D
 
 var neighbors = []
 var direction := Vector2(0,0)
@@ -30,6 +30,11 @@ export var flowfollow := 1.2
 var followflow := false
 var viewrange := 60
 var followpaths := true
+
+export var neighborUpdateInterval := 1.0
+export var steerUpdateInterval := 0.05
+var steerTimer = 0.0
+var neighborTimer = 0.0
 
 # Declare member variables here. Examples:
 # var a = 2
