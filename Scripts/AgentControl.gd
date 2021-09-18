@@ -54,12 +54,14 @@ func _ready():
 	enemyTemplate = get_node(enemyPath)
 	flowMap = get_node(FlowMap)
 	
+	var cn = 0.0
+	var cs = 0.0
 	for n in agentAmount:
-				
+		
 		var newAgent = Spawn(agentTemplate)
 		var pos = Vector2(0 + rand_range(-1,1)*agentSpawnArea, 0 + rand_range(-1,1)*agentSpawnArea)
 		var fpos = pos + Vector2(boundsX/2, boundsY/2)
-		draw_line(fpos, fpos + Vector2.UP, Color(255, 0, 0), 1)
+		
 		newAgent.position = fpos;
 	#	newAgent.apply_central_impulse(pos*.25);
 		newAgent.target = Vector2(boundsX/2,boundsY/2)
@@ -69,6 +71,12 @@ func _ready():
 		newAgent.maxForce = agentMaxForce
 		
 		newAgent.SetSize(.3)
+		
+		newAgent.neighborTimer = cn
+		newAgent.steerTimer = cs		
+		
+		cn += newAgent.neighborUpdateInterval/agentAmount
+		cs += newAgent.steerUpdateInterval/agentAmount
 	
 	var count = 0
 	for e in enemyAmount:
@@ -121,7 +129,7 @@ func Attack(agent):
 			var dist = agent.position.distance_to(n.position)
 			if (dist <= (agent.radius + n.radius +.2)*24):
 				var relSpeed = abs(agent.vel.dot(n.vel))
-				print(str(relSpeed))
+				#print(str(relSpeed))
 				var dmg = abs(relSpeed - n.armor)
 				#print("dmg : "+str(dmg))
 				n.health = n.health - dmg
@@ -254,9 +262,13 @@ func ChargeAt(point, radius):
 			if (a.chargeTimer <= 0 && a.position.distance_to(point) <= radius):
 				Charge(a, point)
 
-func _physics_process(delta):
-	var c = 0
+func _process(delta):
+	
 	for a in agents:
+		
+		a.neighborTimer -= delta
+		a.steerTimer -= delta
+		
 #		print(c)
 		a.chargeTimer -= delta
 		if (a.chargeTimer > 0):
@@ -270,24 +282,35 @@ func _physics_process(delta):
 			a.targetRadius = 0
 			
 		#a.target += Bounds(a)
-		
-		find_neighbors(a)
+		if(a.neighborTimer <= 0):
+			find_neighbors(a)
+			a.neighborTimer += a.neighborUpdateInterval
 		
 		#a.vel = a.linear_velocity
+		if(a.steerTimer <= 0):
+			Steer(a, delta)
+			a.steerTimer += a.steerUpdateInterval	
+			
+	update()
+	
+func _physics_process(delta):
+	var c = 0
+	for a in agents:
 		
-		Steer(a, delta)
+
 		#var f = a.force.clamped(a.maxForce) * forceMultiplier
 		var f = a.force
 		a.vel += f 
 		#a.vel = f
 		#a.add_central_force(f)
 		
-		a.position += a.vel*delta*100
+		#a.position += a.vel*delta*100
+		a.set_linear_velocity(a.vel*100)
 		
 		if(a.health <= 0):
 			a.SetSize(0)
 	
-	update()
+	#update()
 
 
 func _draw():
