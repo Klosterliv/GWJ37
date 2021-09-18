@@ -20,19 +20,19 @@ _data = {
 
 [sub_resource type="CircleShape2D" id=2]
 
-[sub_resource type="ShaderMaterial" id=7]
+[sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 12 )
 
-[sub_resource type="CircleShape2D" id=3]
+[sub_resource type="CircleShape2D" id=4]
 radius = 886.05
 
-[sub_resource type="ShaderMaterial" id=4]
+[sub_resource type="ShaderMaterial" id=5]
 shader = ExtResource( 12 )
 
-[sub_resource type="RectangleShape2D" id=5]
+[sub_resource type="RectangleShape2D" id=6]
 extents = Vector2( 795.59, 23.4748 )
 
-[sub_resource type="RectangleShape2D" id=6]
+[sub_resource type="RectangleShape2D" id=7]
 extents = Vector2( 112.246, 4.08958 )
 
 [node name="WorldScene" type="Node2D"]
@@ -179,7 +179,7 @@ scale = Vector2( 10, 10 )
 shape = SubResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="ball"]
-material = SubResource( 7 )
+material = SubResource( 3 )
 scale = Vector2( 10, 10 )
 texture = ExtResource( 11 )
 
@@ -189,7 +189,7 @@ scale = Vector2( 2.13983, 2.13983 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="thingy"]
 scale = Vector2( 0.4, 0.4 )
-shape = SubResource( 3 )
+shape = SubResource( 4 )
 
 [node name="Sprite" type="Sprite" parent="thingy"]
 scale = Vector2( 10, 10 )
@@ -198,7 +198,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="Polygon2D" type="Polygon2D" parent="StaticBody2D"]
-material = SubResource( 4 )
+material = SubResource( 5 )
 position = Vector2( 6150.88, 1269.35 )
 rotation = -3.0438
 scale = Vector2( 3.13191, 3.13191 )
@@ -243,19 +243,19 @@ __meta__ = {
 position = Vector2( 3836.16, 1896.02 )
 rotation = -4.69626
 scale = Vector2( 3.13191, 3.13191 )
-shape = SubResource( 5 )
+shape = SubResource( 6 )
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D2"]
 position = Vector2( 408.137, 1812.73 )
 rotation = 2.94716
 scale = Vector2( 11.8072, 32.5164 )
-shape = SubResource( 6 )
+shape = SubResource( 7 )
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D2"]
 position = Vector2( 2170.05, 2573.25 )
 rotation = -2.87881
 scale = Vector2( 3.13191, 3.13191 )
-shape = SubResource( 5 )
+shape = SubResource( 6 )
 
 [connection signal="finished" from="Test Interface/Control/AttackSound" to="Test Interface/Control" method="_on_AttackSound_finished"]
 [connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]
