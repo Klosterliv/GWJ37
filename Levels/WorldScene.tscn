@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://Scripts/Control.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/AgentControl.gd" type="Script" id=2]
@@ -11,46 +11,25 @@
 [ext_resource path="res://Levels/BloodFlowSounds.gd" type="Script" id=9]
 [ext_resource path="res://Sounds/explosion.mp3" type="AudioStream" id=10]
 [ext_resource path="res://icon.png" type="Texture" id=11]
-[ext_resource path="res://Art/Shaders/new_visualshader.tres" type="Shader" id=12]
 [ext_resource path="res://Art/perlin1.png" type="Texture" id=13]
 
-[sub_resource type="ShaderMaterial" id=9]
-shader = ExtResource( 12 )
-shader_param/tiling = 4.0
-shader_param/warp_tiling = 3.0
-shader_param/timescale = 0.02
-shader_param/warp_str = 0.1
+[sub_resource type="ShaderMaterial" id=1]
 
-[sub_resource type="Curve2D" id=1]
+[sub_resource type="Curve2D" id=2]
 _data = {
 "points": PoolVector2Array( 0, 0, 0, 0, 112.155, 1605, 0, 0, 0, 0, 1190.66, -403.213 )
 }
 
-[sub_resource type="CircleShape2D" id=2]
+[sub_resource type="CircleShape2D" id=3]
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = ExtResource( 12 )
-shader_param/tiling = null
-shader_param/warp_tiling = null
-shader_param/timescale = null
-shader_param/warp_str = null
+[sub_resource type="ShaderMaterial" id=4]
 
-[sub_resource type="CircleShape2D" id=4]
+[sub_resource type="CircleShape2D" id=5]
 radius = 886.05
 
-[sub_resource type="ShaderMaterial" id=5]
-shader = ExtResource( 12 )
-shader_param/tiling = null
-shader_param/warp_tiling = null
-shader_param/timescale = null
-shader_param/warp_str = null
-
 [sub_resource type="ShaderMaterial" id=6]
-shader = ExtResource( 12 )
-shader_param/tiling = -0.048
-shader_param/warp_tiling = 0.117
-shader_param/timescale = 0.07
-shader_param/warp_str = 0.022
+
+[sub_resource type="ShaderMaterial" id=7]
 
 [node name="WorldScene" type="Node2D"]
 script = ExtResource( 4 )
@@ -95,7 +74,7 @@ texture = ExtResource( 6 )
 
 [node name="Sprite2" type="Sprite" parent="Camera2D/ParallaxBackground"]
 modulate = Color( 0.32549, 0.266667, 0.266667, 1 )
-material = SubResource( 9 )
+material = SubResource( 1 )
 position = Vector2( 3558.53, 2164.72 )
 scale = Vector2( 8.37564, 8.37564 )
 z_as_relative = false
@@ -206,7 +185,7 @@ drawVectorLength = 20
 [node name="Path" type="Path2D" parent="."]
 self_modulate = Color( 0.501961, 0.6, 1, 1 )
 position = Vector2( -228.327, 190.273 )
-curve = SubResource( 1 )
+curve = SubResource( 2 )
 script = ExtResource( 5 )
 
 [node name="ball" type="RigidBody2D" parent="."]
@@ -216,11 +195,11 @@ can_sleep = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ball"]
 scale = Vector2( 10, 10 )
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="ball"]
 visible = false
-material = SubResource( 3 )
+material = SubResource( 4 )
 scale = Vector2( 10, 10 )
 texture = ExtResource( 11 )
 
@@ -230,10 +209,10 @@ scale = Vector2( 2.13983, 2.13983 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="thingy"]
 scale = Vector2( 0.4, 0.4 )
-shape = SubResource( 4 )
+shape = SubResource( 5 )
 
 [node name="Sprite" type="Sprite" parent="thingy"]
-material = SubResource( 5 )
+material = SubResource( 6 )
 scale = Vector2( 10, 10 )
 texture = ExtResource( 11 )
 
@@ -250,7 +229,7 @@ range_height = 62.3
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="Polygon2D" type="Polygon2D" parent="StaticBody2D"]
-material = SubResource( 6 )
+material = SubResource( 7 )
 position = Vector2( 6130.72, 1259.27 )
 rotation = -3.0438
 scale = Vector2( 3.13191, 3.13191 )
@@ -293,5 +272,5 @@ __meta__ = {
 }
 
 [connection signal="finished" from="Test Interface/Control/AttackSound" to="Test Interface/Control" method="_on_AttackSound_finished"]
-[connection signal="toggled" from="Test Interface/DebugButton" to="AgentControl" method="_on_DebugButton_toggled"]
 [connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]
+[connection signal="toggled" from="Test Interface/DebugButton" to="AgentControl" method="_on_DebugButton_toggled"]
