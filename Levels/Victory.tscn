@@ -1,20 +1,20 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Levels/GameOver.gd" type="Script" id=1]
-[ext_resource path="res://Art/Fonts/notshitty.tres" type="DynamicFont" id=2]
-[ext_resource path="res://Sounds/gameover.mp3" type="AudioStream" id=3]
+[ext_resource path="res://Art/Fonts/notshitty.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Sounds/victory.mp3" type="AudioStream" id=2]
+[ext_resource path="res://Levels/Victory.gd" type="Script" id=3]
 
-[sub_resource type="Gradient" id=3]
+[sub_resource type="Gradient" id=1]
 offsets = PoolRealArray( 0.2, 0.421739 )
-colors = PoolColorArray( 0.179688, 0, 0, 1, 0.996094, 0.182877, 0.182877, 0 )
+colors = PoolColorArray( 0.269165, 0.550561, 0.703125, 1, 0.182877, 0.348061, 0.996094, 0 )
 
 [sub_resource type="GradientTexture" id=2]
-gradient = SubResource( 3 )
+gradient = SubResource( 1 )
 
 [node name="Control" type="Control"]
-margin_right = 1024.0
-margin_bottom = 600.0
-script = ExtResource( 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -28,23 +28,23 @@ texture = SubResource( 2 )
 polygon = PoolVector2Array( -28.3929, -31.8264, 1047.07, -28.0803, 1047.07, 650.957, -27.9705, 653.335 )
 
 [node name="Label" type="Label" parent="Polygon2D"]
-margin_left = 72.2354
-margin_top = 606.493
-margin_right = 295.235
-margin_bottom = 636.493
+margin_left = 73.5658
+margin_top = 573.133
+margin_right = 296.566
+margin_bottom = 603.133
 rect_rotation = -89.9999
 rect_scale = Vector2( 3.24851, 2.88135 )
-custom_fonts/font = ExtResource( 2 )
-text = "The Subject has Expired"
+custom_fonts/font = ExtResource( 1 )
+text = "The Subject is cured"
 uppercase = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 3.5
+wait_time = 6.0
 one_shot = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 3 )
+stream = ExtResource( 2 )
 autoplay = true

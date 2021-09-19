@@ -83,7 +83,7 @@ texture = ExtResource( 4 )
 
 [node name="Timer" type="Timer" parent="."]
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 6 )
 autoplay = true
 
