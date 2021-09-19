@@ -1,7 +1,15 @@
 extends Node2D
 
+export var chargeSound : NodePath
+export var squishSound : NodePath
+export var hitSound : NodePath
+
 export var agentPath : NodePath
 export var enemyPath : NodePath
+export var seekerPath : NodePath
+export var bloodcellPath : NodePath
+export var vitalPath : NodePath
+
 export var FlowMap : NodePath
 export var path : NodePath
 #onready var agentbase = preload("res://Scripts/Objects/Agent.tscn")
@@ -39,6 +47,9 @@ var gridPop = []
 
 var agentTemplate
 var enemyTemplate
+var seekerTemplate
+var bloodcellTemplate
+var vitalTemplate
 var flowMap 
 
 var agents = []
@@ -46,7 +57,13 @@ var neighbors
 
 var mousePos = Vector2(0,0)
 var mouseRadius = 0
+var mouseHold = 0.0
 #var followMouse := false
+
+var countSeekers = false
+
+var agentRemoved = false
+var seekerCount = 1
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
@@ -54,6 +71,9 @@ func _ready():
 	mousePos = Vector2(boundsX/2,boundsY/2)
 	agentTemplate = get_node(agentPath)
 	enemyTemplate = get_node(enemyPath)
+	seekerTemplate = get_node(seekerPath)
+	bloodcellTemplate = get_node(bloodcellPath)
+	vitalTemplate = get_node(vitalPath)
 	flowMap = get_node(FlowMap)
 	
 	var cn = 0.0
@@ -86,14 +106,30 @@ func _ready():
 	for e in enemyAmount:
 		count+=1
 		var newEnemy = Spawn(enemyTemplate)
-		var pos = Vector2(count*200, 10)
+		var pos = Vector2(count*200+800, 10)
 		newEnemy.position = pos;
 
 		newEnemy.SetSize(2)
 	#neighbors = init_neighbors(agentAmount, 6, null)
 	pass # Replace with function body.
 	#set_process(true)
-
+func SpawnByID(id:int):
+	var newAgent
+	if (id == 0):
+		newAgent = Spawn(agentTemplate)
+	if (id == 1):
+		newAgent = Spawn(enemyTemplate)
+		newAgent.SetSize(2)
+	if (id == 2):
+		countSeekers = true
+		newAgent = Spawn(seekerTemplate)
+	if (id == 3):
+		newAgent = Spawn(bloodcellTemplate)
+	if (id == 4):
+		newAgent = Spawn(vitalTemplate)
+		newAgent.SetSize(1.4)
+	return newAgent
+	
 func Spawn(template):
 		
 	var newAgent = template.create_instance()
@@ -115,9 +151,29 @@ func find_neighbors(agent):
 	agent.neighbors = []
 	for a in agents:
 		if(a!=agent):
-			if(agent.position.distance_to(a.position)+agent.radius+a.radius < neighborDist):
+			if(agent.position.distance_to(a.position)-agent.radius-a.radius < neighborDist):
 				agent.neighbors.append(a)
 	return
+
+func SearchTargets(agent):
+	var closest
+	var closestDist = 10000.0
+	for a in agents:
+		if(a!=agent && a.id > 2):
+			var dist = agent.position.distance_to(a.position)
+			if(dist < closestDist):
+				closestDist = dist
+				closest = a
+
+	return closest
+
+func CleanNeighbors():
+	for a in agents:
+		var c = 0
+		for n in a.neighbors:
+			if(n == null):
+				a.neighbors.remove(c)
+			c+=1
 
 func Bounds(agent):
 	var bounds = Vector2(0,0)
@@ -131,19 +187,44 @@ func Bounds(agent):
 		bounds.y = 500
 	return bounds
 
-func Attack(agent):
-	for n in agent.neighbors:
-		if (n.id != agent.id):
-			var dist = agent.position.distance_to(n.position)
-			if (dist <= (agent.radius + n.radius +.2)*24):
-				var relSpeed = abs(agent.vel.dot(n.vel))
-				#print(str(relSpeed))
-				var dmg = abs(relSpeed - n.armor)
-				#print("dmg : "+str(dmg))
-				n.health = n.health - dmg
-				if(dmg <= n.health):
-					agent.vel = -agent.vel
-					agent.chargeTimer = 0
+func Attack(agent, target, relV, turn:bool):
+		
+	var dmg = relV.length()
+	dmg = clamp(dmg, 0, 500)
+	dmg -= target.armor
+	dmg = clamp(dmg, 0, 500)
+	if (dmg > 0):
+		get_node(hitSound).position = agent.position
+		get_node(hitSound).play(0.0)
+		agent.hasAttacked = true
+		#print(str(dmg))
+		#print("dmg : "+str(dmg))
+		if (target.Damage(dmg)):
+#			if(turn):
+#				for c in 1:
+##					print(str(c))
+#					var spawned = Spawn(seekerTemplate)
+#					spawned.position = agent.position+Vector2(rand_range(50,120),rand_range(50,120))
+			get_node(squishSound).position = agent.position
+			get_node(squishSound).play(0.0)
+			var targetIndex = agents.find(target)
+			if (targetIndex != -1):
+				agents.remove(targetIndex)
+			target.queue_free()
+			CleanNeighbors()
+	pass
+#	for n in agent.neighbors:
+#		if (n.id != agent.id):
+#			var dist = agent.position.distance_to(n.position)
+#			if (dist <= (agent.radius + n.radius +.2)*24):
+#				var relSpeed = abs(agent.vel.dot(n.vel))
+#				#print(str(relSpeed))
+#				var dmg = abs(relSpeed - n.armor)
+#				#print("dmg : "+str(dmg))
+#				n.health = n.health - dmg
+#				if(dmg <= n.health):
+#					agent.vel = -agent.vel
+#					agent.chargeTimer = 0
 				
 				
 				
@@ -176,6 +257,10 @@ func Separation(agent):
 	var sepDist = 60
 	var count = 0
 	for n in agent.neighbors:
+		# THIS IS SCOTCH TAPE!!!!!!!!!!!!!
+		if (!is_instance_valid(n)):
+			return sum
+		# !!!!!!!!!!!!!!!!!!!!!
 		var v = agent.position - n.position
 		var d = v.length()
 		if (d < sepDist):
@@ -189,6 +274,10 @@ func Separation(agent):
 func Alignment(agent):
 	var sum = Vector2(0,0)
 	for n in agent.neighbors:
+		# THIS IS SCOTCH TAPE!!!!!!!!!!!!!
+		if (!is_instance_valid(n)):
+			return sum
+		# !!!!!!!!!!!!!!!!!!!!!
 		sum += n.vel
 	if(agent.neighbors.size() > 0):
 		sum /= agent.neighbors.size()
@@ -198,6 +287,10 @@ func Alignment(agent):
 func Cohesion(agent):
 	var sum = Vector2(0,0)
 	for n in agent.neighbors:
+		# THIS IS SCOTCH TAPE!!!!!!!!!!!!!
+		if (!is_instance_valid(n)):
+			return sum
+		# !!!!!!!!!!!!!!!!!!!!!		
 		sum += n.position
 	if(agent.neighbors.size() > 0):
 		sum /= agent.neighbors.size()
@@ -232,6 +325,7 @@ func Wander(agent):
 
 func Steer(agent, delta):
 	
+	
 	var steer = Vector2.ZERO
 	
 	if(agent.separate):
@@ -248,10 +342,11 @@ func Steer(agent, delta):
 	
 	var target = Seek(agent, agent.target) * targetseek
 	var flow = FlowFieldFollow(agent, flowMap) * flowfollow
-	var follow = Follow(agent, get_node(path))
+	var follow = Vector2.ZERO#Follow(agent, get_node(path))
 	if !followflow:
 		flow = Vector2.ZERO
 	if !followpaths:
+		#follow *= agent.pathFollow
 		follow = Vector2.ZERO
 	
 	steer = steer + target + flow + follow + bounds
@@ -263,24 +358,65 @@ func Charge(agent, target):
 	var dir = (target - agent.position).normalized()
 	agent.vel += dir * agent.chargeStrength * agent.maxForce
 	agent.chargeTimer = agent.chargeDelay
+	get_node(chargeSound).position = agent.position
+	get_node(chargeSound).play(0.0)
 	
 func ChargeAt(point, radius):
 	for a in agents:
 		if (a.id == 0):
 			if (a.chargeTimer <= 0 && a.position.distance_to(point) <= radius):
 				Charge(a, point)
+				
+func AoE(agent, radius):
+	
+	for n in agent.neighbors:
+		if (!is_instance_valid(n)):
+			return
+		if(n != null && n.id > 2):
+			
+			radius = radius + n.radius + agent.radius
+			var dist = agent.position.distance_to(n.position)
+			Attack(agent, n, Vector2(20,20), true)
+			if (dist <= radius):
+				
+				Attack(agent, n, Vector2(20,20), true)
+
+				
 
 func _process(delta):
 	
-	for a in agents:
+	CleanNeighbors()
+	
+	if(countSeekers):
+		var seekers = 0
+		for a in agents:
+			if a.id == 2:
+				seekers+=1
 		
+		seekerCount = seekers
+#	if(countVitals):
+#		var vitals = 0
+#		for a in agents:
+#			if a.id == 4:
+#				vitals+=1
+#
+#		vitalCount = vitals
+	
+	
+	for a in agents:		
+		
+#		if(a.id != 0):
+#			print(str(a.id))
 		a.neighborTimer -= delta
 		a.steerTimer -= delta
 		
 #		print(c)
 		a.chargeTimer -= delta
-		if (a.chargeTimer > 0):
-			Attack(a)
+		if (a.chargeTimer < 0):
+			a.hasAttacked = false
+#			Attack(a)
+		else:
+			a.UpdateMaterial()
 		
 		if (a.id == 0 && a.followMouse):
 			a.target = mousePos
@@ -288,7 +424,26 @@ func _process(delta):
 		elif(a.wander): 
 			Wander(a)
 			a.targetRadius = 0
-			
+		if(a.id == 2):
+			if (!is_instance_valid(a.targetAgent)):
+				a.vel = Vector2.ZERO
+				a.force = Vector2.ZERO
+				a.targetAgent = SearchTargets(a)
+				Wander(a)
+			if(a.targetAgent != null):
+				a.target = a.targetAgent.position
+				AoE(a, 1000.0)
+			a.targetSearchTimer -= delta
+			if (a.targetSearchTimer <= 0):
+				if(!a.targetSearching):
+					a.targetSearching = true
+					a.targetSearchTimer += a.targetSearchInterval+rand_range(0,.5)
+				else:
+					a.targetAgent = SearchTargets(a)
+					a.targetSearchTimer += a.targetSearchInterval+rand_range(0,.5)
+			elif (a.targetAgent != null):
+				a.target = a.targetAgent.position
+		
 		#a.target += Bounds(a)
 		if(a.neighborTimer <= 0):
 			find_neighbors(a)
@@ -305,7 +460,7 @@ func _physics_process(delta):
 	var c = 0
 	for a in agents:
 		
-
+		SetMaterialProperties(a)
 		#var f = a.force.clamped(a.maxForce) * forceMultiplier
 		var f = a.force
 		a.vel += f 
@@ -315,8 +470,6 @@ func _physics_process(delta):
 		#a.position += a.vel*delta*100
 		a.set_linear_velocity(a.vel*100)
 		
-		if(a.health <= 0):
-			a.SetSize(0)
 	
 	#update()
 
@@ -324,7 +477,7 @@ func MouseControl(action:int, mpos:Vector2, radius:float):
 	var influenced = []
 	mouseRadius = radius
 	for a in agents:
-		if (a.position.distance_to(mpos) < radius):
+		if (a.id == 0 && a.position.distance_to(mpos) < radius):
 			
 			influenced.append(a)
 			if(action == 0):
@@ -337,7 +490,9 @@ func MouseControl(action:int, mpos:Vector2, radius:float):
 
 func _draw():
 #	draw_line(get_node(path).curve.get_point_position(0), get_node(path).curve.get_point_position(1),Color(.4,.1,.1,.4), 20)
-	draw_circle(mousePos, mouseRadius, Color(.7, .9, .8, .02))
+	draw_circle(mousePos, mouseRadius, Color(.7, .9, .8, .05))
+	draw_circle(mousePos, lerp(0, mouseRadius, mouseHold), Color(.7, .9, .8, .1))
+	draw_circle(mousePos, 10, Color(.9, .7, .6, .2))
 	#DrawGrid()
 	if (!drawDir && !drawNeighbors): 
 		return
@@ -378,6 +533,9 @@ func DrawGrid():
 	for y in linesY+1:
 		var o = Vector2(0, y*gridSize)
 		draw_line(o, o+Vector2.RIGHT*boundsX, Color(0, .6, .6, .6), 1)	
+		
+func HoldingLMB(interpolation):
+	mouseHold = interpolation
 
 func remap_range(value, InputA, InputB, OutputA, OutputB):
 	return(value - InputA) / (InputB - InputA) * (OutputB - OutputA) + OutputA
@@ -398,6 +556,9 @@ func getNormal(p:Vector2,a:Vector2,b:Vector2):
 	
 	return (a + ab)
 
+func SetMaterialProperties(agent):
+	#agent.get_node("Sprite").material.set_shader_param("Color", Color.rebeccapurple )
+	pass
 
 func _on_DebugButton_toggled(button_pressed):
 	if button_pressed:

@@ -17,4 +17,4 @@ func _draw():
 	pass
 
 func GetPoint(index):
-	return (position + curve.get_baked_points()[index])*scale
+	return (global_position + curve.get_point_position(index))

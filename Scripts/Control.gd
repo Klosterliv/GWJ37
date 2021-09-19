@@ -15,16 +15,45 @@ var RMBaction := 2
 
 var controlled = []
 var influenced = []
+
+var secsHeldLMB := 0.0
+var rallyHoldTime := .6
+var lastMousePos := Vector2.ZERO
+var mousePos := Vector2.ONE
+
+var notRallying := false
 	
 
 func _process(delta): 
 	var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
-	if (Input.is_mouse_button_pressed(BUTTON_LEFT)):
+	mousePos = globalWorldMousePosition
+	influenced = get_node(agentControl).MouseControl(0, globalWorldMousePosition, moveRadius)
+	if(lastMousePos != mousePos):
+		secsHeldLMB = 0
 		
+	if (Input.is_mouse_button_pressed(BUTTON_LEFT)):
+		if(lastMousePos == mousePos && !notRallying):
+			secsHeldLMB += delta
+		else:
+			secsHeldLMB = 0
+			notRallying = true
 		#var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
-		get_node(agentControl).FollowMouse(true, controlled, moveRadius)
+		if(secsHeldLMB >= rallyHoldTime):
+			get_node(agentControl).FollowMouse(true, get_node(agentControl).agents, moveRadius)
+			secsHeldLMB = 0
+			notRallying = true
+		else:		
+			get_node(agentControl).FollowMouse(true, controlled, moveRadius)
 	else:
+		notRallying = false
+		secsHeldLMB = 0		
 		get_node(agentControl).FollowMouse(false, get_node(agentControl).agents, moveRadius*.8)
+	if(secsHeldLMB > 0 && !notRallying):
+		get_node(agentControl).HoldingLMB(clamp(secsHeldLMB/rallyHoldTime,0,1))
+	else: 
+		get_node(agentControl).HoldingLMB(0)
+	lastMousePos = mousePos
+	update()
 		
 func _input(event):
 	var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
@@ -58,9 +87,11 @@ func _input(event):
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 #	mouseCoordLabel = find_node("MouseCoord")
+
 	pass # Replace with function body.
 
 
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
