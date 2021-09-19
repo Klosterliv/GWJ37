@@ -27,8 +27,9 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_right = 68.0
-margin_bottom = 88.0
+margin_top = -30.2381
+margin_right = 74.0
+margin_bottom = 57.7619
 rect_scale = Vector2( 4.05794, 2.16124 )
 alignment = 1
 __meta__ = {
@@ -46,7 +47,6 @@ flat = true
 
 [node name="Ouch" type="AudioStreamPlayer" parent="VBoxContainer/StartButton"]
 stream = ExtResource( 5 )
-pitch_scale = 1.35
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 margin_top = 46.0

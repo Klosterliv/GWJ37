@@ -38,7 +38,7 @@ custom_fonts/font = ExtResource( 2 )
 text = "The Subject has Expired"
 uppercase = true
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": true
 }
 
 [node name="Timer" type="Timer" parent="."]

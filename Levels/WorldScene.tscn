@@ -159,6 +159,7 @@ targetseek = 0.0
 [node name="Test Interface" type="CanvasLayer" parent="."]
 
 [node name="MouseCoord" type="Label" parent="Test Interface"]
+visible = false
 anchor_right = 0.039
 anchor_bottom = 0.052
 margin_left = 33.8541
@@ -172,6 +173,7 @@ __meta__ = {
 }
 
 [node name="FlowMapValue" type="Label" parent="Test Interface"]
+visible = false
 anchor_right = 0.039
 anchor_bottom = 0.052
 margin_left = 33.8541
@@ -213,6 +215,7 @@ flowMapLabel = NodePath("../FlowMapValue")
 stream = ExtResource( 10 )
 
 [node name="DebugButton" type="Button" parent="Test Interface"]
+visible = false
 margin_right = 12.0
 margin_bottom = 20.0
 toggle_mode = true

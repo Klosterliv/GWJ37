@@ -28,10 +28,10 @@ texture = SubResource( 2 )
 polygon = PoolVector2Array( -28.3929, -31.8264, 1047.07, -28.0803, 1047.07, 650.957, -27.9705, 653.335 )
 
 [node name="Label" type="Label" parent="Polygon2D"]
-margin_left = 73.5658
-margin_top = 573.133
-margin_right = 296.566
-margin_bottom = 603.133
+margin_left = 72.2355
+margin_top = 565.6
+margin_right = 295.235
+margin_bottom = 595.6
 rect_rotation = -89.9999
 rect_scale = Vector2( 3.24851, 2.88135 )
 custom_fonts/font = ExtResource( 1 )
