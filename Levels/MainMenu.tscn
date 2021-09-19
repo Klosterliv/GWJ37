@@ -1,21 +1,22 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Levels/MainMenu.gd" type="Script" id=1]
-[ext_resource path="res://Art/Fonts/itlivesintheswamp.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Art/Fonts/LoveNature-48z9.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://Art/Models/Syringe.tscn" type="PackedScene" id=3]
 [ext_resource path="res://icon.png" type="Texture" id=4]
 [ext_resource path="res://Sounds/ouch.mp3" type="AudioStream" id=5]
+[ext_resource path="res://Sounds/menutune.mp3" type="AudioStream" id=6]
 
-[sub_resource type="DynamicFont" id=3]
-size = 30
+[sub_resource type="DynamicFont" id=1]
+size = 20
 font_data = ExtResource( 2 )
 
-[sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0, 0.291304 )
-colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0 )
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0, 0.291304, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1 )
 
-[sub_resource type="GradientTexture" id=2]
-gradient = SubResource( 1 )
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
 
 [node name="MainMenu" type="Control"]
 anchor_right = 1.0
@@ -26,32 +27,33 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_right = 63.0
-margin_bottom = 77.0
-rect_scale = Vector2( 3.48124, 3.48124 )
+margin_top = -30.2381
+margin_right = 74.0
+margin_bottom = 57.7619
+rect_scale = Vector2( 4.05794, 2.16124 )
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="StartButton" type="Button" parent="VBoxContainer"]
-margin_right = 68.0
+margin_top = 14.0
+margin_right = 74.0
 margin_bottom = 42.0
 focus_neighbour_top = NodePath("../QuitButton")
-custom_fonts/font = SubResource( 3 )
-text = "Start"
+custom_fonts/font = SubResource( 1 )
+text = "Enter"
 flat = true
 
 [node name="Ouch" type="AudioStreamPlayer" parent="VBoxContainer/StartButton"]
 stream = ExtResource( 5 )
-pitch_scale = 1.35
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 margin_top = 46.0
-margin_right = 68.0
-margin_bottom = 88.0
+margin_right = 74.0
+margin_bottom = 74.0
 focus_neighbour_bottom = NodePath("../StartButton")
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 1 )
 text = "Quit"
 flat = true
 
@@ -68,7 +70,7 @@ texture = ExtResource( 4 )
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 z_index = -1
-texture = SubResource( 2 )
+texture = SubResource( 3 )
 polygon = PoolVector2Array( 1081.28, -54.2601, 1087.58, 690.353, -52.6474, 679.014, -58.947, -64.3394 )
 
 [node name="Black" type="Sprite" parent="."]
@@ -79,6 +81,10 @@ scale = Vector2( 22.301, 13.5164 )
 texture = ExtResource( 4 )
 
 [node name="Timer" type="Timer" parent="."]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+autoplay = true
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_StartButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_QuitButton_pressed"]

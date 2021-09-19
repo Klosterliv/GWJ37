@@ -1,0 +1,50 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Levels/GameOver.gd" type="Script" id=1]
+[ext_resource path="res://Art/Fonts/notshitty.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Sounds/gameover.mp3" type="AudioStream" id=3]
+
+[sub_resource type="Gradient" id=3]
+offsets = PoolRealArray( 0.2, 0.421739 )
+colors = PoolColorArray( 0.179688, 0, 0, 1, 0.996094, 0.182877, 0.182877, 0 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 3 )
+
+[node name="Control" type="Control"]
+margin_right = 1024.0
+margin_bottom = 600.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2( 1024, -2774.44 )
+rotation = 1.57079
+scale = Vector2( 2.64, 1.68 )
+z_index = 3
+texture = SubResource( 2 )
+polygon = PoolVector2Array( -28.3929, -31.8264, 1047.07, -28.0803, 1047.07, 650.957, -27.9705, 653.335 )
+
+[node name="Label" type="Label" parent="Polygon2D"]
+margin_left = 72.2354
+margin_top = 606.493
+margin_right = 295.235
+margin_bottom = 636.493
+rect_rotation = -89.9999
+rect_scale = Vector2( 3.24851, 2.88135 )
+custom_fonts/font = ExtResource( 2 )
+text = "The Subject has Expired"
+uppercase = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.5
+one_shot = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+autoplay = true
