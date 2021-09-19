@@ -11,29 +11,25 @@
 [ext_resource path="res://Levels/BloodFlowSounds.gd" type="Script" id=9]
 [ext_resource path="res://Sounds/explosion.mp3" type="AudioStream" id=10]
 [ext_resource path="res://icon.png" type="Texture" id=11]
-[ext_resource path="res://Art/Shaders/new_visualshader.tres" type="Shader" id=12]
+[ext_resource path="res://Art/perlin1.png" type="Texture" id=13]
 
-[sub_resource type="Curve2D" id=1]
+[sub_resource type="ShaderMaterial" id=1]
+
+[sub_resource type="Curve2D" id=2]
 _data = {
 "points": PoolVector2Array( 0, 0, 0, 0, 112.155, 1605, 0, 0, 0, 0, 1190.66, -403.213 )
 }
 
-[sub_resource type="CircleShape2D" id=2]
+[sub_resource type="CircleShape2D" id=3]
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = ExtResource( 12 )
+[sub_resource type="ShaderMaterial" id=4]
 
-[sub_resource type="CircleShape2D" id=4]
+[sub_resource type="CircleShape2D" id=5]
 radius = 886.05
 
-[sub_resource type="ShaderMaterial" id=5]
-shader = ExtResource( 12 )
+[sub_resource type="ShaderMaterial" id=6]
 
-[sub_resource type="RectangleShape2D" id=6]
-extents = Vector2( 795.59, 23.4748 )
-
-[sub_resource type="RectangleShape2D" id=7]
-extents = Vector2( 112.246, 4.08958 )
+[sub_resource type="ShaderMaterial" id=7]
 
 [node name="WorldScene" type="Node2D"]
 script = ExtResource( 4 )
@@ -54,12 +50,34 @@ autoplay = true
 script = ExtResource( 9 )
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="Camera2D"]
-scroll_offset = Vector2( 2, 2 )
+layer = -1
+follow_viewport_enable = true
+follow_viewport_scale = 0.7
+
+[node name="Light2D2" type="Light2D" parent="Camera2D/ParallaxBackground"]
+position = Vector2( 3565.25, 1520.37 )
+rotation = -1.77725
+scale = Vector2( 13.8537, 28.0982 )
+texture = ExtResource( 13 )
+texture_scale = 0.82
+energy = 1.45
+mode = 2
+range_height = 62.3
+range_layer_min = -10
 
 [node name="Sprite" type="Sprite" parent="Camera2D/ParallaxBackground"]
+visible = false
 modulate = Color( 0.32549, 0.266667, 0.266667, 1 )
 position = Vector2( 2798.5, 1621.65 )
 scale = Vector2( 8.37564, 8.37564 )
+texture = ExtResource( 6 )
+
+[node name="Sprite2" type="Sprite" parent="Camera2D/ParallaxBackground"]
+modulate = Color( 0.32549, 0.266667, 0.266667, 1 )
+material = SubResource( 1 )
+position = Vector2( 3558.53, 2164.72 )
+scale = Vector2( 8.37564, 8.37564 )
+z_as_relative = false
 texture = ExtResource( 6 )
 
 [node name="AgentControl" type="Node2D" parent="."]
@@ -74,6 +92,7 @@ cohesion = 0.6
 followpaths = false
 agentAmount = 200
 agentSpawnArea = 500.0
+drawNeighbors = false
 neighborDist = 80.0
 forceMultiplier = 5.0
 boundsX = 5000
@@ -166,7 +185,7 @@ drawVectorLength = 20
 [node name="Path" type="Path2D" parent="."]
 self_modulate = Color( 0.501961, 0.6, 1, 1 )
 position = Vector2( -228.327, 190.273 )
-curve = SubResource( 1 )
+curve = SubResource( 2 )
 script = ExtResource( 5 )
 
 [node name="ball" type="RigidBody2D" parent="."]
@@ -176,10 +195,11 @@ can_sleep = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ball"]
 scale = Vector2( 10, 10 )
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="ball"]
-material = SubResource( 3 )
+visible = false
+material = SubResource( 4 )
 scale = Vector2( 10, 10 )
 texture = ExtResource( 11 )
 
@@ -189,21 +209,34 @@ scale = Vector2( 2.13983, 2.13983 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="thingy"]
 scale = Vector2( 0.4, 0.4 )
-shape = SubResource( 4 )
+shape = SubResource( 5 )
 
 [node name="Sprite" type="Sprite" parent="thingy"]
+material = SubResource( 6 )
 scale = Vector2( 10, 10 )
 texture = ExtResource( 11 )
+
+[node name="Light2D" type="Light2D" parent="."]
+position = Vector2( 1975.84, 873.832 )
+rotation = -1.77725
+scale = Vector2( 13.8537, 28.0982 )
+texture = ExtResource( 13 )
+texture_scale = 0.82
+energy = 1.45
+mode = 2
+range_height = 62.3
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="Polygon2D" type="Polygon2D" parent="StaticBody2D"]
-material = SubResource( 5 )
-position = Vector2( 6150.88, 1269.35 )
+material = SubResource( 7 )
+position = Vector2( 6130.72, 1259.27 )
 rotation = -3.0438
 scale = Vector2( 3.13191, 3.13191 )
+texture = ExtResource( 11 )
 texture_scale = Vector2( 0.286, 0.452 )
 polygon = PoolVector2Array( 159.034, 98.1882, 215.034, 34.1882, 269.034, 18.1882, 349.034, 30.1882, 389.034, 102.188, 369.034, 148.188, 391.034, 212.188, 431.034, 230.188, 475.034, 232.188, 513.034, 214.188, 535.034, 160.188, 511.034, 84.1882, 579.034, 38.1882, 699.034, 14.1882, 761.034, 44.1882, 825.034, 104.188, 883.034, 176.188, 965.034, 182.188, 1115.03, 200.188, 1203.03, 172.188, 1231.03, 122.188, 1281.03, 56.1882, 1379.03, 48.1882, 1473.03, 80.1882, 1505.03, 138.188, 1485.03, 196.188, 1455.03, 242.188, 1439.03, 302.188, 1455.03, 362.188, 1489.03, 392.188, 1575.03, 394.188, 1613.03, 364.188, 1683.03, 312.188, 1695.03, 380.188, 1673.03, 436.188, 1625.03, 470.188, 1613.03, 522.188, 1647.03, 598.188, 1667.03, 646.188, 1661.03, 718.188, 1593.03, 788.188, 1467.03, 842.188, 1389.03, 876.188, 1215.03, 768.188, 1095.03, 750.188, 1043.03, 812.188, 979.034, 868.188, 887.034, 888.188, 821.034, 838.188, 743.034, 786.188, 623.034, 842.188, 617.034, 896.188, 573.034, 932.188, 473.034, 950.188, 379.034, 938.188, 335.034, 864.188, 311.034, 784.188, 267.034, 736.188, 201.034, 742.188, 109.034, 748.188, 57.0341, 782.188, -78.9659, 762.188, -114.966, 708.188, -132.966, 630.188, -108.966, 526.188, -74.9659, 380.188, -156.966, 246.188, -80.9659, 96.1882, 135.034, 64.1882 )
+uv = PoolVector2Array( -2019.57, -617.517, -1786.09, -884.355, -1560.94, -951.066, -1227.4, -901.034, -1060.62, -600.841, -1144.01, -409.051, -1052.28, -142.213, -885.509, -67.1663, -702.057, -58.8259, -543.622, -133.875, -451.897, -359.019, -551.962, -675.887, -268.446, -867.677, 231.875, -967.742, 490.375, -842.661, 757.214, -592.503, 999.034, -292.31, 1340.92, -267.294, 1966.31, -192.245, 2333.21, -308.986, 2449.95, -517.454, 2658.42, -792.631, 3067.01, -825.985, 3458.93, -692.566, 3592.35, -450.746, 3508.96, -208.924, 3383.88, -17.1338, 3317.17, 233.029, 3383.88, 483.189, 3525.64, 608.268, 3884.2, 616.608, 4042.64, 491.527, 4334.49, 274.721, 4384.52, 558.238, 4292.8, 791.72, 4092.67, 933.477, 4042.64, 1150.28, 4184.4, 1467.15, 4267.78, 1667.28, 4242.77, 1967.47, 3959.25, 2259.33, 3433.92, 2484.47, 3108.71, 2626.23, 2383.24, 2175.94, 1882.92, 2100.89, 1666.12, 2359.39, 1399.29, 2592.88, 1015.71, 2676.26, 740.536, 2467.8, 415.327, 2250.99, -84.9937, 2484.47, -110.01, 2709.62, -293.462, 2859.71, -710.395, 2934.76, -1102.32, 2884.73, -1285.77, 2576.2, -1385.83, 2242.65, -1569.28, 2042.52, -1844.46, 2067.54, -2228.04, 2092.56, -2444.84, 2234.31, -3011.88, 2150.93, -3161.97, 1925.78, -3237.02, 1600.57, -3136.96, 1166.96, -2995.2, 558.238, -3337.08, -0.455444, -3020.21, -625.857, -2119.63, -759.276 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
 visible = false
@@ -219,8 +252,7 @@ __meta__ = {
 collision_mask = 0
 
 [node name="Polygon2D2" type="Polygon2D" parent="StaticBody2D2"]
-visible = false
-position = Vector2( 5158.24, 5190.84 )
+position = Vector2( 5136.88, 5190.84 )
 rotation = -3.10334
 scale = Vector2( 3.13191, 3.13191 )
 color = Color( 1, 1, 1, 0.258824 )
@@ -238,24 +270,6 @@ disabled = true
 __meta__ = {
 "_editor_description_": ""
 }
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
-position = Vector2( 3836.16, 1896.02 )
-rotation = -4.69626
-scale = Vector2( 3.13191, 3.13191 )
-shape = SubResource( 6 )
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D2"]
-position = Vector2( 408.137, 1812.73 )
-rotation = 2.94716
-scale = Vector2( 11.8072, 32.5164 )
-shape = SubResource( 7 )
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D2"]
-position = Vector2( 2170.05, 2573.25 )
-rotation = -2.87881
-scale = Vector2( 3.13191, 3.13191 )
-shape = SubResource( 6 )
 
 [connection signal="finished" from="Test Interface/Control/AttackSound" to="Test Interface/Control" method="_on_AttackSound_finished"]
 [connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]

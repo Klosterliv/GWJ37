@@ -315,7 +315,7 @@ func _physics_process(delta):
 
 func _draw():
 	draw_line(get_node(path).curve.get_point_position(0), get_node(path).curve.get_point_position(1),Color(.4,.1,.1,.4), 20)
-	DrawGrid()
+	#DrawGrid()
 	if (!drawDir && !drawNeighbors): 
 		return
 	var c = false
