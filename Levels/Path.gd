@@ -13,7 +13,7 @@ func _draw():
 	for i in curve.get_baked_points():
 		coords.append(GetPoint(c))
 		c += 1
-	draw_polyline(coords, Color(0.9,0.2,0.2,0.5), radius, false)
+#	draw_polyline(coords, Color(0.9,0.2,0.2,0.5), radius, false)
 	pass
 
 func GetPoint(index):

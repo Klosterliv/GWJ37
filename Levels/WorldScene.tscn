@@ -11,25 +11,36 @@
 [ext_resource path="res://Levels/BloodFlowSounds.gd" type="Script" id=9]
 [ext_resource path="res://Sounds/explosion.mp3" type="AudioStream" id=10]
 [ext_resource path="res://icon.png" type="Texture" id=11]
-[ext_resource path="res://Art/perlin1.png" type="Texture" id=13]
+[ext_resource path="res://Art/Shaders/new_visualshader.tres" type="Shader" id=12]
+[ext_resource path="res://Art/noises_perlinblob2.png" type="Texture" id=13]
+[ext_resource path="res://Art/noises_perlinblob1.png" type="Texture" id=14]
+[ext_resource path="res://Sounds/heartbeat_001.wav" type="AudioStream" id=15]
 
 [sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 12 )
+shader_param/tiling = 12.0
+shader_param/warp_tiling = 5.954
+shader_param/timescale = 0.1
+shader_param/warp_str = 0.08
 
 [sub_resource type="Curve2D" id=2]
 _data = {
 "points": PoolVector2Array( 0, 0, 0, 0, 112.155, 1605, 0, 0, 0, 0, 1190.66, -403.213 )
 }
 
-[sub_resource type="CircleShape2D" id=3]
-
-[sub_resource type="ShaderMaterial" id=4]
-
-[sub_resource type="CircleShape2D" id=5]
-radius = 886.05
-
-[sub_resource type="ShaderMaterial" id=6]
+[sub_resource type="ShaderMaterial" id=8]
+shader = ExtResource( 12 )
+shader_param/tiling = 0.664
+shader_param/warp_tiling = 0.56
+shader_param/timescale = 0.056
+shader_param/warp_str = 0.03
 
 [sub_resource type="ShaderMaterial" id=7]
+shader = ExtResource( 12 )
+shader_param/tiling = 0.05
+shader_param/warp_tiling = 0.131
+shader_param/timescale = 0.038
+shader_param/warp_str = -0.025
 
 [node name="WorldScene" type="Node2D"]
 script = ExtResource( 4 )
@@ -38,11 +49,18 @@ __meta__ = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 2525.61, 1516.88 )
+position = Vector2( 1129.62, 1012.91 )
 current = true
 zoom = Vector2( 3, 3 )
 script = ExtResource( 3 )
-defaultZoom = 5.0
+defaultZoom = 1.0
+zoomStep = 0.1
+zoomMin = 0.5
+zoomMax = 4.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer" parent="Camera2D"]
+stream = ExtResource( 15 )
+autoplay = true
 
 [node name="BloodFlowSounds" type="AudioStreamPlayer" parent="Camera2D"]
 stream = ExtResource( 8 )
@@ -55,15 +73,40 @@ follow_viewport_enable = true
 follow_viewport_scale = 0.7
 
 [node name="Light2D2" type="Light2D" parent="Camera2D/ParallaxBackground"]
-position = Vector2( 3565.25, 1520.37 )
-rotation = -1.77725
-scale = Vector2( 13.8537, 28.0982 )
+position = Vector2( 3819.82, 2947.79 )
+rotation = 4.28283
+scale = Vector2( 30.5064, -7.94548 )
 texture = ExtResource( 13 )
-texture_scale = 0.82
-energy = 1.45
-mode = 2
-range_height = 62.3
+texture_scale = 0.59
+energy = 1.28
+range_height = 58.3
 range_layer_min = -10
+range_layer_max = -1
+shadow_gradient_length = 9.6
+
+[node name="Light2D4" type="Light2D" parent="Camera2D/ParallaxBackground"]
+position = Vector2( 1228.77, 1122.13 )
+rotation = 5.26167
+scale = Vector2( 3.73846, -7.17089 )
+texture = ExtResource( 14 )
+texture_scale = 0.59
+energy = 1.28
+range_height = 58.3
+range_layer_min = -10
+range_layer_max = -1
+shadow_gradient_length = 9.6
+
+[node name="Light2D3" type="Light2D" parent="Camera2D/ParallaxBackground"]
+position = Vector2( 9769.07, 10632.2 )
+rotation = 5.21811
+scale = Vector2( 30.2636, -66.9342 )
+texture = ExtResource( 14 )
+texture_scale = 0.59
+energy = 1.45
+range_height = 97.1
+range_layer_min = -10
+range_layer_max = -1
+shadow_gradient_length = 9.6
 
 [node name="Sprite" type="Sprite" parent="Camera2D/ParallaxBackground"]
 visible = false
@@ -75,12 +118,14 @@ texture = ExtResource( 6 )
 [node name="Sprite2" type="Sprite" parent="Camera2D/ParallaxBackground"]
 modulate = Color( 0.32549, 0.266667, 0.266667, 1 )
 material = SubResource( 1 )
-position = Vector2( 3558.53, 2164.72 )
-scale = Vector2( 8.37564, 8.37564 )
+position = Vector2( 5374.38, 4921.24 )
+scale = Vector2( 22.3142, 22.3142 )
 z_as_relative = false
 texture = ExtResource( 6 )
 
 [node name="AgentControl" type="Node2D" parent="."]
+position = Vector2( 0, -1.8877 )
+z_index = 4096
 script = ExtResource( 2 )
 agentPath = NodePath("Agent")
 enemyPath = NodePath("AgentEnemy1")
@@ -95,6 +140,7 @@ agentSpawnArea = 500.0
 drawNeighbors = false
 neighborDist = 80.0
 forceMultiplier = 5.0
+enemyAmount = 0
 boundsX = 5000
 boundsY = 3000
 
@@ -188,89 +234,105 @@ position = Vector2( -228.327, 190.273 )
 curve = SubResource( 2 )
 script = ExtResource( 5 )
 
-[node name="ball" type="RigidBody2D" parent="."]
-position = Vector2( 3962.58, 1191.66 )
-scale = Vector2( 4.67993, 4.67993 )
-can_sleep = false
+[node name="walls" type="Node2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ball"]
-scale = Vector2( 10, 10 )
-shape = SubResource( 3 )
+[node name="StaticBody2D2" type="StaticBody2D" parent="walls"]
+position = Vector2( 2184.81, 2961.48 )
+rotation = -3.02138
 
-[node name="Sprite" type="Sprite" parent="ball"]
+[node name="Polygon2D" type="Polygon2D" parent="walls/StaticBody2D2"]
+material = SubResource( 8 )
+position = Vector2( 997.839, 1181.88 )
+rotation = -3.0438
+scale = Vector2( 3.13191, 3.13191 )
+texture = ExtResource( 11 )
+texture_scale = Vector2( 0.286, 0.452 )
+polygon = PoolVector2Array( 246.421, -37.6141, 312.013, -20.8716, 359.881, -38.8838, 371.941, -84.7705, 407.134, -138.89, 441.661, -208.513, 516.514, -222.82, 569.963, -180.511, 600.601, -84.5271, 639.469, 111.976, 693.523, 221.606, 756.822, 328.585, 842.485, 437.209, 931.56, 670.479, 979.034, 868.188, 1110.92, 1223.37, 1138.27, 1550.44, 1091.36, 1675.22, 1118.88, 1834.92, 1065.87, 1912.48, 1083.02, 1963.76, 1155.58, 1986.79, 1153.86, 2073.51, 1226.91, 2114.25, 1344.4, 2332.15, 1498.94, 2479.21, 1749.53, 2539.07, 2038.21, 2547.64, 2208.75, 2517.54, 2350.01, 2422.53, 2457.06, 2343.87, 2582.54, 2335.11, 2744.44, 2440.99, 2989.39, 3268.01, 2283.47, 3236.44, 163.963, 3193.57, -518.046, 1052.32, -609.033, 542.269, -683.84, 224.438, -741.603, -107.441, -321.717, -198.256, -233.44, -180.724, -190.962, -136.114, -125.484, -91.3527, -43.5065, -83.5836, 6.1366, -142.609, 50.7415, -180.304, 115.199, -173.593, 161.46, -135.109, 194.042, -77.8105 )
+uv = PoolVector2Array( 211.112, 140.675, 304.367, 99.0263, 364.816, 37.4813, 377.293, -45.5392, 383.498, -134.579, 421.441, -200.525, 516.514, -222.82, 585.911, -171.518, 600.601, -84.5271, 639.469, 111.976, 693.523, 221.606, 756.822, 328.585, 842.485, 437.209, 931.56, 670.479, 979.034, 868.188, 1110.92, 1223.37, 1138.27, 1550.44, 1091.36, 1675.22, 1118.88, 1834.92, 1065.87, 1912.48, 1083.02, 1963.76, 1155.58, 1986.79, 1153.86, 2073.51, 1226.91, 2114.25, 1344.4, 2332.15, 1498.94, 2479.21, 1749.53, 2539.07, 2038.21, 2547.64, 2208.75, 2517.54, 2350.01, 2422.53, 2457.06, 2343.87, 2582.54, 2335.11, 2744.44, 2440.99, 2989.39, 3268.01, 2283.47, 3236.44, 163.963, 3193.57, -518.046, 1052.32, -609.033, 542.269, -683.84, 224.438, -741.603, -107.441, -321.717, -198.256, -233.44, -180.724, -199.143, -133.921, -179.998, -19.6287, -129.075, 87.6237, -85.3451, 141.526, 22.4142, 210.201, 122.272, 203.796 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="walls/StaticBody2D2"]
 visible = false
-material = SubResource( 4 )
-scale = Vector2( 10, 10 )
+material = SubResource( 7 )
+position = Vector2( 997.839, 1181.88 )
+rotation = -3.0438
+scale = Vector2( 3.13191, 3.13191 )
+polygon = PoolVector2Array( 211.112, 140.675, 304.367, 99.0263, 364.816, 37.4813, 377.293, -45.5392, 383.498, -134.579, 421.441, -200.525, 516.514, -222.82, 585.911, -171.518, 600.601, -84.5271, 639.469, 111.976, 693.523, 221.606, 756.822, 328.585, 842.485, 437.209, 931.56, 670.479, 979.034, 868.188, 1110.92, 1223.37, 1138.27, 1550.44, 1091.36, 1675.22, 1118.88, 1834.92, 1065.87, 1912.48, 1083.02, 1963.76, 1155.58, 1986.79, 1153.86, 2073.51, 1226.91, 2114.25, 1344.4, 2332.15, 1498.94, 2479.21, 1749.53, 2539.07, 2038.21, 2547.64, 2208.75, 2517.54, 2350.01, 2422.53, 2457.06, 2343.87, 2582.54, 2335.11, 2744.44, 2440.99, 2989.39, 3268.01, 2283.47, 3236.44, 163.963, 3193.57, -518.046, 1052.32, -609.033, 542.269, -683.84, 224.438, -741.603, -107.441, -321.717, -198.256, -233.44, -180.724, -199.143, -133.921, -179.998, -19.6287, -129.075, 87.6237, -85.3451, 141.526, 22.4142, 210.201, 122.272, 203.796 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="walls"]
+position = Vector2( 9609.68, 887.831 )
+rotation = -0.897255
+
+[node name="Polygon2D" type="Polygon2D" parent="walls/StaticBody2D3"]
+material = SubResource( 8 )
+position = Vector2( 997.839, 1181.88 )
+rotation = -3.0438
+scale = Vector2( 3.13191, 3.13191 )
 texture = ExtResource( 11 )
+texture_scale = Vector2( 0.286, 0.452 )
+polygon = PoolVector2Array( 1322.55, -2082.3, 1612.88, -1113.9, 2147.29, -578.57, 2414.18, -213.065, 2428.79, 203.159, 2279.36, 644.356, 2127.9, 985.281, 1988.48, 1238.8, 1829.59, 1435.27, 1704.12, 1496.74, 1579.48, 1597.67, 1346.48, 1753.12, 1154.26, 1963.54, 821.412, 2217.54, 343.578, 2695.59, 519.206, 2830.06, 862.376, 2541.3, 1054.09, 2341.44, 1306.74, 2008.95, 1698.36, 1724.28, 1795.94, 1737.38, 1848.85, 1789.22, 1878.24, 1849.99, 1851.32, 1933.29, 1855.78, 2000.22, 1904.96, 2060.59, 1986.79, 2114.19, 2061.88, 2132.73, 2132.83, 2102.98, 2166.09, 2138.41, 2181.52, 2198.31, 2159.13, 2247.42, 2178.29, 2298.93, 2228.4, 2337.01, 2296.25, 2398.24, 2335.12, 2463.89, 2309.91, 2875.74, 2419.58, 3029.26, 2550.65, 3088.45, 2707.97, 3116.47, 2786.38, 3045.89, 2661.93, 2720.12, 2839.19, 2553.43, 3164.4, 2876.29, 2976, 3223.47, 2637.47, 3235.91, 2414.18, 3209.83, 163.963, 3193.57, -518.046, 1052.32, -609.033, 542.269, -683.84, 224.438, -1531.54, -2116.51 )
+uv = PoolVector2Array( 211.112, 140.675, 304.367, 99.0263, 364.816, 37.4813, 377.293, -45.5392, 383.498, -134.579, 421.441, -200.525, 516.514, -222.82, 585.911, -171.518, 600.601, -84.5271, 639.469, 111.976, 693.523, 221.606, 756.822, 328.585, 842.485, 437.209, 931.56, 670.479, 979.034, 868.188, 1110.92, 1223.37, 1138.27, 1550.44, 1091.36, 1675.22, 1118.88, 1834.92, 1065.87, 1912.48, 1083.02, 1963.76, 1155.58, 1986.79, 1153.86, 2073.51, 1226.91, 2114.25, 1344.4, 2332.15, 1498.94, 2479.21, 1749.53, 2539.07, 2038.21, 2547.64, 2208.75, 2517.54, 2350.01, 2422.53, 2457.06, 2343.87, 2582.54, 2335.11, 2744.44, 2440.99, 2989.39, 3268.01, 2283.47, 3236.44, 163.963, 3193.57, -518.046, 1052.32, -609.033, 542.269, -683.84, 224.438, -741.603, -107.441, -321.717, -198.256, -233.44, -180.724, -199.143, -133.921, -179.998, -19.6287, -129.075, 87.6237, -85.3451, 141.526, 22.4142, 210.201, 122.272, 203.796 )
 
-[node name="thingy" type="KinematicBody2D" parent="."]
-position = Vector2( 4280, 2312 )
-scale = Vector2( 2.13983, 2.13983 )
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="walls/StaticBody2D3"]
+visible = false
+material = SubResource( 7 )
+position = Vector2( 997.839, 1181.88 )
+rotation = -3.0438
+scale = Vector2( 3.13191, 3.13191 )
+polygon = PoolVector2Array( 211.112, 140.675, 304.367, 99.0263, 364.816, 37.4813, 377.293, -45.5392, 383.498, -134.579, 421.441, -200.525, 516.514, -222.82, 585.911, -171.518, 600.601, -84.5271, 639.469, 111.976, 693.523, 221.606, 756.822, 328.585, 842.485, 437.209, 931.56, 670.479, 979.034, 868.188, 1110.92, 1223.37, 1138.27, 1550.44, 1091.36, 1675.22, 1118.88, 1834.92, 1065.87, 1912.48, 1083.02, 1963.76, 1155.58, 1986.79, 1153.86, 2073.51, 1226.91, 2114.25, 1344.4, 2332.15, 1498.94, 2479.21, 1749.53, 2539.07, 2038.21, 2547.64, 2208.75, 2517.54, 2350.01, 2422.53, 2457.06, 2343.87, 2582.54, 2335.11, 2744.44, 2440.99, 2989.39, 3268.01, 2283.47, 3236.44, 163.963, 3193.57, -518.046, 1052.32, -609.033, 542.269, -683.84, 224.438, -741.603, -107.441, -321.717, -198.256, -233.44, -180.724, -199.143, -133.921, -179.998, -19.6287, -129.075, 87.6237, -85.3451, 141.526, 22.4142, 210.201, 122.272, 203.796 )
+__meta__ = {
+"_editor_description_": ""
+}
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="thingy"]
-scale = Vector2( 0.4, 0.4 )
-shape = SubResource( 5 )
+[node name="lightsFG" type="Node2D" parent="."]
 
-[node name="Sprite" type="Sprite" parent="thingy"]
-material = SubResource( 6 )
-scale = Vector2( 10, 10 )
-texture = ExtResource( 11 )
-
-[node name="Light2D" type="Light2D" parent="."]
-position = Vector2( 1975.84, 873.832 )
-rotation = -1.77725
-scale = Vector2( 13.8537, 28.0982 )
+[node name="Light2D" type="Light2D" parent="lightsFG"]
+position = Vector2( 7372.97, 8819.03 )
+rotation = -0.921938
+scale = Vector2( 23.4831, 30.4695 )
 texture = ExtResource( 13 )
 texture_scale = 0.82
 energy = 1.45
-mode = 2
 range_height = 62.3
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="Light2D2" type="Light2D" parent="lightsFG"]
+position = Vector2( 1263.44, 1243.32 )
+rotation = 2.19388
+scale = Vector2( 5.47854, -7.32407 )
+texture = ExtResource( 14 )
+texture_scale = 0.73
+energy = 1.53
+range_height = 33.7
 
-[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D"]
-material = SubResource( 7 )
-position = Vector2( 6130.72, 1259.27 )
-rotation = -3.0438
-scale = Vector2( 3.13191, 3.13191 )
-texture = ExtResource( 11 )
-texture_scale = Vector2( 0.286, 0.452 )
-polygon = PoolVector2Array( 159.034, 98.1882, 215.034, 34.1882, 269.034, 18.1882, 349.034, 30.1882, 389.034, 102.188, 369.034, 148.188, 391.034, 212.188, 431.034, 230.188, 475.034, 232.188, 513.034, 214.188, 535.034, 160.188, 511.034, 84.1882, 579.034, 38.1882, 699.034, 14.1882, 761.034, 44.1882, 825.034, 104.188, 883.034, 176.188, 965.034, 182.188, 1115.03, 200.188, 1203.03, 172.188, 1231.03, 122.188, 1281.03, 56.1882, 1379.03, 48.1882, 1473.03, 80.1882, 1505.03, 138.188, 1485.03, 196.188, 1455.03, 242.188, 1439.03, 302.188, 1455.03, 362.188, 1489.03, 392.188, 1575.03, 394.188, 1613.03, 364.188, 1683.03, 312.188, 1695.03, 380.188, 1673.03, 436.188, 1625.03, 470.188, 1613.03, 522.188, 1647.03, 598.188, 1667.03, 646.188, 1661.03, 718.188, 1593.03, 788.188, 1467.03, 842.188, 1389.03, 876.188, 1215.03, 768.188, 1095.03, 750.188, 1043.03, 812.188, 979.034, 868.188, 887.034, 888.188, 821.034, 838.188, 743.034, 786.188, 623.034, 842.188, 617.034, 896.188, 573.034, 932.188, 473.034, 950.188, 379.034, 938.188, 335.034, 864.188, 311.034, 784.188, 267.034, 736.188, 201.034, 742.188, 109.034, 748.188, 57.0341, 782.188, -78.9659, 762.188, -114.966, 708.188, -132.966, 630.188, -108.966, 526.188, -74.9659, 380.188, -156.966, 246.188, -80.9659, 96.1882, 135.034, 64.1882 )
-uv = PoolVector2Array( -2019.57, -617.517, -1786.09, -884.355, -1560.94, -951.066, -1227.4, -901.034, -1060.62, -600.841, -1144.01, -409.051, -1052.28, -142.213, -885.509, -67.1663, -702.057, -58.8259, -543.622, -133.875, -451.897, -359.019, -551.962, -675.887, -268.446, -867.677, 231.875, -967.742, 490.375, -842.661, 757.214, -592.503, 999.034, -292.31, 1340.92, -267.294, 1966.31, -192.245, 2333.21, -308.986, 2449.95, -517.454, 2658.42, -792.631, 3067.01, -825.985, 3458.93, -692.566, 3592.35, -450.746, 3508.96, -208.924, 3383.88, -17.1338, 3317.17, 233.029, 3383.88, 483.189, 3525.64, 608.268, 3884.2, 616.608, 4042.64, 491.527, 4334.49, 274.721, 4384.52, 558.238, 4292.8, 791.72, 4092.67, 933.477, 4042.64, 1150.28, 4184.4, 1467.15, 4267.78, 1667.28, 4242.77, 1967.47, 3959.25, 2259.33, 3433.92, 2484.47, 3108.71, 2626.23, 2383.24, 2175.94, 1882.92, 2100.89, 1666.12, 2359.39, 1399.29, 2592.88, 1015.71, 2676.26, 740.536, 2467.8, 415.327, 2250.99, -84.9937, 2484.47, -110.01, 2709.62, -293.462, 2859.71, -710.395, 2934.76, -1102.32, 2884.73, -1285.77, 2576.2, -1385.83, 2242.65, -1569.28, 2042.52, -1844.46, 2067.54, -2228.04, 2092.56, -2444.84, 2234.31, -3011.88, 2150.93, -3161.97, 1925.78, -3237.02, 1600.57, -3136.96, 1166.96, -2995.2, 558.238, -3337.08, -0.455444, -3020.21, -625.857, -2119.63, -759.276 )
+[node name="Light2D4" type="Light2D" parent="lightsFG"]
+position = Vector2( 2553.16, 1488.96 )
+rotation = 2.73598
+scale = Vector2( 6.24208, 10.339 )
+texture = ExtResource( 13 )
+texture_scale = 0.73
+energy = 1.86
+range_height = 55.4
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
-visible = false
-position = Vector2( 6150.88, 1269.35 )
-rotation = -3.0438
-scale = Vector2( 3.13191, 3.13191 )
-polygon = PoolVector2Array( 159.034, 98.1882, 215.034, 34.1882, 269.034, 18.1882, 349.034, 30.1882, 389.034, 102.188, 369.034, 148.188, 391.034, 212.188, 431.034, 230.188, 475.034, 232.188, 513.034, 214.188, 535.034, 160.188, 511.034, 84.1882, 579.034, 38.1882, 699.034, 14.1882, 761.034, 44.1882, 825.034, 104.188, 883.034, 176.188, 965.034, 182.188, 1115.03, 200.188, 1203.03, 172.188, 1231.03, 122.188, 1281.03, 56.1882, 1379.03, 48.1882, 1473.03, 80.1882, 1505.03, 138.188, 1485.03, 196.188, 1455.03, 242.188, 1439.03, 302.188, 1455.03, 362.188, 1489.03, 392.188, 1575.03, 394.188, 1613.03, 364.188, 1683.03, 312.188, 1695.03, 380.188, 1673.03, 436.188, 1625.03, 470.188, 1613.03, 522.188, 1647.03, 598.188, 1667.03, 646.188, 1661.03, 718.188, 1593.03, 788.188, 1467.03, 842.188, 1389.03, 876.188, 1215.03, 768.188, 1095.03, 750.188, 1043.03, 812.188, 979.034, 868.188, 887.034, 888.188, 821.034, 838.188, 743.034, 786.188, 623.034, 842.188, 617.034, 896.188, 573.034, 932.188, 473.034, 950.188, 379.034, 938.188, 335.034, 864.188, 311.034, 784.188, 267.034, 736.188, 201.034, 742.188, 109.034, 748.188, 57.0341, 782.188, -78.9659, 762.188, -114.966, 708.188, -132.966, 630.188, -108.966, 526.188, -74.9659, 380.188, -156.966, 246.188, -80.9659, 96.1882, 135.034, 64.1882 )
-__meta__ = {
-"_editor_description_": ""
-}
+[node name="Light2D5" type="Light2D" parent="lightsFG"]
+position = Vector2( 3663.15, 2868.03 )
+rotation = 3.03661
+scale = Vector2( 3.8386, 19.2843 )
+texture = ExtResource( 13 )
+texture_scale = 0.73
+energy = 1.86
+range_height = 55.4
 
-[node name="StaticBody2D2" type="StaticBody2D" parent="."]
-collision_mask = 0
-
-[node name="Polygon2D2" type="Polygon2D" parent="StaticBody2D2"]
-position = Vector2( 5136.88, 5190.84 )
-rotation = -3.10334
-scale = Vector2( 3.13191, 3.13191 )
-color = Color( 1, 1, 1, 0.258824 )
-texture = ExtResource( 6 )
-texture_scale = Vector2( 0.286, 0.452 )
-polygon = PoolVector2Array( 1734.75, 32.7056, 2055.95, 703.297, 2055, 1053.38, 2250.04, 1651.33, 1834.41, 1934.17, 1308.57, 2058.37, 1187.85, 1890.68, 1379.86, 1736.61, 1751.65, 1598.68, 1674.9, 1317.56, 1457.74, 1116.41, 1444.24, 838.61, 1274.91, 612.68, 1204.78, 666.291, 1095.03, 750.188, 1043.03, 812.188, 979.034, 868.188, 887.034, 888.188, 821.034, 838.188, 743.034, 786.188, 623.034, 842.188, 617.034, 896.188, 573.034, 932.188, 473.034, 950.188, 379.034, 938.188, 335.034, 864.188, 311.034, 784.188, 267.034, 736.188, 201.034, 742.188, 109.034, 748.188, 100.06, 1350.69, -230.862, 1400.65, -417.377, 1175.38, -509.237, 949.356, -631.844, 744.592, -966.48, 622.544, -978.499, 83.5828 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D2"]
-visible = false
-position = Vector2( 5329.74, 4058.9 )
-rotation = -3.10334
-scale = Vector2( 3.13191, 3.13191 )
-polygon = PoolVector2Array( 1734.75, 32.7056, 2055.95, 703.297, 2055, 1053.38, 2250.04, 1651.33, 1834.41, 1934.17, 1308.57, 2058.37, 1187.85, 1890.68, 1379.86, 1736.61, 1751.65, 1598.68, 1674.9, 1317.56, 1457.74, 1116.41, 1444.24, 838.61, 1274.91, 612.68, 1146.3, 576.826, 1139.85, 461.427, 1096.83, 347.932, 1076.72, 315.448, 1075.18, 467.96, 1082.49, 552.893, 1095.03, 750.188, 1043.03, 812.188, 979.034, 868.188, 887.034, 888.188, 821.034, 838.188, 743.034, 786.188, 573.034, 932.188, 379.034, 938.188, 335.034, 864.188, 311.034, 784.188, 267.034, 736.188, 201.034, 742.188, 109.034, 748.188, 100.06, 1350.69, -230.862, 1400.65, -417.377, 1175.38, -509.237, 949.356, -631.844, 744.592, -966.48, 622.544, -978.499, 83.5828, -277.751, -9.24353, 573.502, -33.2145, 1156.44, -95.6941 )
-disabled = true
-__meta__ = {
-"_editor_description_": ""
-}
+[node name="Light2D3" type="Light2D" parent="lightsFG"]
+position = Vector2( 745.842, 940.682 )
+rotation = 1.99987
+scale = Vector2( 2.48088, -11.2464 )
+texture = ExtResource( 14 )
+texture_scale = 0.73
+energy = 1.53
+range_height = 33.7
 
 [connection signal="finished" from="Test Interface/Control/AttackSound" to="Test Interface/Control" method="_on_AttackSound_finished"]
-[connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]
 [connection signal="toggled" from="Test Interface/DebugButton" to="AgentControl" method="_on_DebugButton_toggled"]
+[connection signal="toggled" from="Test Interface/DebugButton" to="VectorField" method="_on_DebugButton_toggled"]

@@ -18,6 +18,7 @@ export var agentMaxSpeed := 6
 export var agentMaxForce := 0.8
 
 export var agentAmount := 5
+export var agentSpawnPoint := Vector2(140, 1000)
 export var agentSpawnArea := 200.0
 export var drawDir := true
 export var drawNeighbors := true
@@ -44,7 +45,8 @@ var agents = []
 var neighbors
 
 var mousePos = Vector2(0,0)
-var followMouse := false
+var mouseRadius = 0
+#var followMouse := false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
@@ -61,10 +63,12 @@ func _ready():
 		var newAgent = Spawn(agentTemplate)
 		var pos = Vector2(0 + rand_range(-1,1)*agentSpawnArea, 0 + rand_range(-1,1)*agentSpawnArea)
 		var fpos = pos + Vector2(boundsX/2, boundsY/2)
+		fpos = agentSpawnPoint
 		
 		newAgent.position = fpos;
 	#	newAgent.apply_central_impulse(pos*.25);
-		newAgent.target = Vector2(boundsX/2,boundsY/2)
+		#newAgent.target = Vector2(boundsX/2,boundsY/2)
+		newAgent.target = Vector2(1160, 1000)
 		newAgent.targetRadius = 300
 		
 		newAgent.maxSpeed = agentMaxSpeed
@@ -100,8 +104,12 @@ func Spawn(template):
 	
 	return newAgent
 
-func FollowMouse(yesno):
-	followMouse = yesno
+func FollowMouse(yesno, controlled, radius:float):
+	if (controlled.size() < 1):
+		pass
+	for a in controlled:
+		a.followMouse = yesno
+		a.targetRadius = radius
 
 func find_neighbors(agent):
 	agent.neighbors = []
@@ -274,9 +282,9 @@ func _process(delta):
 		if (a.chargeTimer > 0):
 			Attack(a)
 		
-		if (a.id == 0 && followMouse):
+		if (a.id == 0 && a.followMouse):
 			a.target = mousePos
-			a.targetRadius = 260
+			#a.targetRadius = 260
 		elif(a.wander): 
 			Wander(a)
 			a.targetRadius = 0
@@ -312,14 +320,31 @@ func _physics_process(delta):
 	
 	#update()
 
+func MouseControl(action:int, mpos:Vector2, radius:float):
+	var influenced = []
+	mouseRadius = radius
+	for a in agents:
+		if (a.position.distance_to(mpos) < radius):
+			
+			influenced.append(a)
+			if(action == 0):
+				a.debugCircle = true
+		else:
+			a.debugCircle = false
+			pass
+	return influenced
+	
 
 func _draw():
-	draw_line(get_node(path).curve.get_point_position(0), get_node(path).curve.get_point_position(1),Color(.4,.1,.1,.4), 20)
+#	draw_line(get_node(path).curve.get_point_position(0), get_node(path).curve.get_point_position(1),Color(.4,.1,.1,.4), 20)
+	draw_circle(mousePos, mouseRadius, Color(.7, .9, .8, .02))
 	#DrawGrid()
 	if (!drawDir && !drawNeighbors): 
 		return
 	var c = false
 	for a in agents:
+		if (a.debugCircle):
+			draw_circle(a.position, 12, Color.cadetblue)
 		if (drawDir):
 			var pos = a.position
 			var vel = a.vel

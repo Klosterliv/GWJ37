@@ -31,10 +31,14 @@ var followflow := false
 var viewrange := 60
 var followpaths := true
 
+var followMouse := false
+
 export var neighborUpdateInterval := 1.0
 export var steerUpdateInterval := 0.05
 var steerTimer = 0.0
 var neighborTimer = 0.0
+
+var debugCircle := false
 
 # Declare member variables here. Examples:
 # var a = 2
