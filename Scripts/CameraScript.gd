@@ -9,9 +9,6 @@ export var zoomMax := 8.0
 func _ready():
 	zoom = Vector2(defaultZoom, defaultZoom)
 
-#func _process(delta):
-#	pass
-
 func _unhandled_input(event):
 	
 	if event is InputEventMouseButton:
@@ -32,3 +29,6 @@ func move_camera(dv: Vector2):
 func _process(delta):
 	var newZoom = lerp(zoom.x, defaultZoom, delta*10)
 	zoom = Vector2(newZoom, newZoom)
+	
+	if Input.is_action_pressed("ui_cancel"):
+		get_tree().change_scene("res://Levels/GameOver.tscn")

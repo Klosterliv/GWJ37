@@ -15,14 +15,18 @@ ssao_radius = 0.1
 dof_blur_far_enabled = true
 dof_blur_far_distance = 5.99
 dof_blur_far_amount = 0.14
+adjustment_enabled = true
+adjustment_brightness = 0.9
+adjustment_contrast = 1.5
+adjustment_saturation = 0.9
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 4 )
 
 [node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( -0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 3.55449, -1.94999, 1.57068 )
-light_color = Color( 0.803922, 0.952941, 1, 1 )
-light_energy = 7.48
+transform = Transform( -0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 2.73236, -2.68621, 2.30871 )
+light_color = Color( 1, 0.0941176, 0.0941176, 1 )
+light_energy = 8.72
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( -0.5, 0.75183, -0.429828, -0.0916967, 0.447572, 0.889534, 0.861157, 0.484181, -0.154846, -1.12304, 1.69404, 0.831345 )

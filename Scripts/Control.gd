@@ -26,6 +26,7 @@ func _process(delta):
 	else:
 		get_node(agentControl).FollowMouse(false, get_node(agentControl).agents, moveRadius*.8)
 		
+
 func _input(event):
 	var globalWorldMousePosition: Vector2 = get_viewport().get_canvas_transform().affine_inverse().xform(get_canvas_transform().xform(get_global_mouse_position()))
 	influenced = get_node(agentControl).MouseControl(0, globalWorldMousePosition, moveRadius)
