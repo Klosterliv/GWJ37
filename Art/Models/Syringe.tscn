@@ -1,31 +1,36 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://Art/Models/Syringe.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://Art/Models/Aguja.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Art/Models/Arm/arms1fbx.fbx" type="PackedScene" id=2]
+[ext_resource path="res://Art/HDR/hospital_room_4k.exr" type="Texture" id=3]
+[ext_resource path="res://Art/Models/Syringe.gd" type="Script" id=4]
 
-[sub_resource type="ShaderMaterial" id=1]
+[sub_resource type="PanoramaSky" id=1]
+panorama = ExtResource( 3 )
+
+[sub_resource type="Environment" id=2]
+background_mode = 2
+background_sky = SubResource( 1 )
+ssao_radius = 0.1
+dof_blur_far_enabled = true
+dof_blur_far_distance = 5.99
+dof_blur_far_amount = 0.14
 
 [node name="Spatial" type="Spatial"]
-
-[node name="Syringe" type="MeshInstance" parent="."]
-transform = Transform( -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
-mesh = ExtResource( 1 )
-material/0 = null
-material/1 = SubResource( 1 )
-material/2 = null
-material/3 = null
-material/4 = null
-material/5 = null
-material/6 = null
-material/7 = null
-material/8 = null
-material/9 = null
-material/10 = null
-material/11 = null
-material/12 = null
-
-[node name="Camera" type="Camera" parent="Syringe"]
-transform = Transform( 0, -0.866025, -0.5, 0, -0.5, 0.866025, -1, 0, 0, -0.0836399, 0.0894347, 0 )
+script = ExtResource( 4 )
 
 [node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.291511, 0 )
+transform = Transform( -0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 3.55449, -1.94999, 1.57068 )
+light_color = Color( 0.803922, 0.952941, 1, 1 )
 light_energy = 7.48
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( -0.5, 0.75183, -0.429828, -0.0916967, 0.447572, 0.889534, 0.861157, 0.484181, -0.154846, -1.12304, 1.69404, 0.831345 )
+environment = SubResource( 2 )
+fov = 30.0
+
+[node name="arms1fbx" parent="." instance=ExtResource( 2 )]
+transform = Transform( -1.83046, -9.07415, 0.897513, 8.8765, -1.98271, -1.9424, 2.08649, 0.474315, 9.05085, 3.86976, -5.37959, -0.23151 )
+
+[node name="Aguja" parent="." instance=ExtResource( 1 )]
+transform = Transform( -0.256958, -0.196271, -0.946282, -0.737924, 0.672124, 0.0609723, 0.624052, 0.713952, -0.31754, 2.3265, -4.93234, 2.39413 )
